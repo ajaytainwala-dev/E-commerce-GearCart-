@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import dotenv from "dotenv";
 import ExpressError from "../utils/ExpressError";
+import { Product } from "../models/Product";
 
 class ProductController {
   public path: string = "/product";
@@ -19,4 +20,16 @@ class ProductController {
         throw new ExpressError("Internal server error", 500);
         }
     };
+    private uploadProduct = async (req: Request, res: Response) => {
+        try {
+        // Your logic here
+        res.send("Product uploaded successfully");
+        } catch (error) {
+        throw new ExpressError("Internal server error", 500);
+        }
+    }
 }
+
+
+
+export default ProductController;
