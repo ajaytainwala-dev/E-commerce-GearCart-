@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -27,6 +27,23 @@ import IconButton from "@mui/material/IconButton";
 import { GoogleIcon, FacebookIcon } from "./CustomIcons";
 // import AppTheme from "../shared-theme/AppTheme";
 // import ColorModeSelect from "../shared-theme/ColorModeSelect";
+
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  mobile: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  googleId?: string;
+  facebookId?: string;
+  isAdmin: boolean;
+}
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",
@@ -71,27 +88,18 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn() {
-  //   const [otp, setOtp] = React.useState("");
-  // const [emailError, setEmailError] = React.useState(false);
-  // const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  // const [passwordError, setPasswordError] = React.useState(false);
-  // const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
   // React Hook Form
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState,
-  } = useForm<{ email: string; password: string }>();
+  const { register, handleSubmit, reset, formState } = useForm<IUser>();
 
-  const { errors, isSubmitting, isSubmitSuccessful} = formState;
+  const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
-React.useEffect(() => {
-  if (isSubmitSuccessful) {
-    reset({ email: "", password: "" });
-  }
-  // eslint-disable-next-line
-}, [formState, reset]);
+  React.useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+      console.log(errors);
+    }
+    // eslint-disable-next-line
+  }, [formState, reset]);
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -102,46 +110,42 @@ React.useEffect(() => {
     setOpen(false);
   };
 
-  const handlSubmit = (data: { email: string; password: string }) => {
-    // if (emailError || passwordError) {
-    //   return;
-    // }
-    console.log({
-      email: data.email,
-      password: data.password,
-    });
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      // if (!response.ok) {
+      //   throw new Error("Failed to log in");
+      // }
+      if (response.status === 400) {
+        throw new Error("User already exists");
+      }
+
+      const result = await response.json();
+      // document.cookie = `token=${result.token}; path=/; max-age=3600; secure; samesite=strict`;
+      localStorage.setItem("token", result.token);
+      console.log("Registration successful:", result.token);
+      window.location.href="/";
+    } catch (err) {
+      console.log(err);
+    }
   };
-
-  // const validateInputs = () => {
-  //   const email = document.getElementById("email") as HTMLInputElement;
-  //   const password = document.getElementById("password") as HTMLInputElement;
-
-  //   let isValid = true;
-
-  //   if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-  //     setEmailError(true);
-  //     setEmailErrorMessage("Please enter a valid email address.");
-  //     isValid = false;
-  //   } else {
-  //     setEmailError(false);
-  //     setEmailErrorMessage("");
-  //   }
-
-  
-
-  //   return isValid;
-  // };
 
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const handleMouseDownPassword = (event: { preventDefault: () => void; }) => {
+  const handleMouseDownPassword = (event: { preventDefault: () => void }) => {
     event.preventDefault();
   };
 
   return (
-    // <AppTheme {...props}>
     <>
       <CssBaseline enableColorScheme />
       <SignInContainer
@@ -159,11 +163,12 @@ React.useEffect(() => {
             variant="h4"
             sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
           >
-            Log In
+            Register
           </Typography>
+
           <Box
             component="form"
-            onSubmit={handleSubmit(handlSubmit)}
+            onSubmit={handleSubmit(onSubmit)}
             noValidate
             sx={{
               display: "flex",
@@ -172,33 +177,72 @@ React.useEffect(() => {
               gap: 2,
             }}
           >
-            <FormControl>
-              {/* <OTPInput/> */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email I'D"
-                autoComplete="email"
-                autoFocus
-                {...register("email", {
-                  required: "Email is must!",
-                    pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: "Please enter a valid email address.",
-                    },
-                })}
+                label="Name"
+                {...register("name", { required: "Name is required" })}
+                error={!!errors.name}
+                helperText={errors.name?.message}
               />
-              {errors.email && (
-                <span
-                  className="text-red-500 text-center "
-                  style={{ textAlign: "center", marginLeft: "5%" }}
-                >
-                  {errors.email.message}
-                </span>
-              )}
-            </FormControl>
+              <TextField
+                label="Email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "Invalid email address",
+                  },
+                })}
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
+              <TextField
+                label="Mobile"
+                {...register("mobile", {
+                  required: "Mobile number is required",
+                })}
+                error={!!errors.mobile}
+                helperText={errors.mobile?.message}
+              />
+              <TextField
+                label="Street"
+                {...register("address.street", {
+                  required: "Street is required",
+                })}
+                error={!!errors.address?.street}
+                helperText={errors.address?.street?.message}
+              />
+              <TextField
+                label="City"
+                {...register("address.city", { required: "City is required" })}
+                error={!!errors.address?.city}
+                helperText={errors.address?.city?.message}
+              />
+              <TextField
+                label="State"
+                {...register("address.state", {
+                  required: "State is required",
+                })}
+                error={!!errors.address?.state}
+                helperText={errors.address?.state?.message}
+              />
+              <TextField
+                label="Postal Code"
+                {...register("address.postalCode", {
+                  required: "Postal code is required",
+                })}
+                error={!!errors.address?.postalCode}
+                helperText={errors.address?.postalCode?.message}
+              />
+              <TextField
+                label="Country"
+                {...register("address.country", {
+                  required: "Country is required",
+                })}
+                error={!!errors.address?.country}
+                helperText={errors.address?.country?.message}
+              />
+            </Box>
             <FormControl sx={{ width: "100%" }} variant="filled">
               <FormLabel htmlFor="outlined-adornment-password" className="m-2">
                 Password
@@ -246,12 +290,13 @@ React.useEffect(() => {
                 </span>
               )}
             </FormControl>
+
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
             <ForgotPassword open={open} handleClose={handleClose} />
-           
+
             {isSubmitting ? (
               <Button
                 disabled
@@ -260,7 +305,7 @@ React.useEffect(() => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Login
+                Registering...
               </Button>
             ) : (
               <Button
@@ -269,7 +314,7 @@ React.useEffect(() => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Login
+                Register
               </Button>
             )}
             <Link

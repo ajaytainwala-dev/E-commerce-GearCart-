@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import AppBar from "../components/AppBar/AppBar";
 import Footer from "../components/Footer/Footer";
 import { Geist, Geist_Mono } from "next/font/google";
+import AppContext from "../Context/AppContext";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
+
+// import AuthWrapper from "../Context/NextAuthProvider";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,9 +34,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AppBar/>
-        {children}
-        <Footer/>
+        <UserProvider loginUrl="/api/auth/login">
+          <AppContext>
+            <NextTopLoader height={5} showSpinner={false} />
+            <AppBar />
+            {children}
+            <Footer />
+          </AppContext>
+        </UserProvider>
       </body>
     </html>
   );

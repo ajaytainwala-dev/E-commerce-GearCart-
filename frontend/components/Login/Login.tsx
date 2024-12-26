@@ -1,5 +1,7 @@
-"use client"
+"use client";
 import * as React from "react";
+// import { useContext } from "react";
+// import { AppContext } from "../../Context/AppContext";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
@@ -24,6 +26,7 @@ import ForgotPassword from "./ForgotPassword";
 import OutlinedInput from "@mui/material/OutlinedInput";
 // import InputLabel from "@mui/material/InputLabel";
 import IconButton from "@mui/material/IconButton";
+// import { useSession, signIn, signOut } from "next-auth/react";
 import { GoogleIcon, FacebookIcon } from "./CustomIcons";
 // import AppTheme from "../shared-theme/AppTheme";
 // import ColorModeSelect from "../shared-theme/ColorModeSelect";
@@ -71,27 +74,23 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn() {
-  //   const [otp, setOtp] = React.useState("");
-  // const [emailError, setEmailError] = React.useState(false);
-  // const [emailErrorMessage, setEmailErrorMessage] = React.useState("");
-  // const [passwordError, setPasswordError] = React.useState(false);
-  // const [passwordErrorMessage, setPasswordErrorMessage] = React.useState("");
+  // const { data: session } = useSession();
   // React Hook Form
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState,
-  } = useForm<{ email: string; password: string }>();
+  // const { isLogin } = useContext(AppContext);
 
-  const { errors, isSubmitting, isSubmitSuccessful} = formState;
+  const { register, handleSubmit, reset, formState } = useForm<{
+    email: string;
+    password: string;
+  }>();
 
-React.useEffect(() => {
-  if (isSubmitSuccessful) {
-    reset({ email: "", password: "" });
-  }
-  // eslint-disable-next-line
-}, [formState, reset]);
+  const { errors, isSubmitting, isSubmitSuccessful } = formState;
+
+  React.useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset({ email: "", password: "" });
+    }
+    // eslint-disable-next-line
+  }, [formState, reset]);
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -102,46 +101,46 @@ React.useEffect(() => {
     setOpen(false);
   };
 
-  const handlSubmit = (data: { email: string; password: string }) => {
-    // if (emailError || passwordError) {
-    //   return;
-    // }
+  const handlSubmit = async (data: { email: string; password: string }) => {
     console.log({
       email: data.email,
       password: data.password,
     });
+    try {
+      const response = await fetch("http://127.0.0.1:5000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to log in");
+      }
+
+      const result = await response.json();
+      // document.cookie = `token=${result.token}; path=/; max-age=3600; secure; samesite=strict`;
+      localStorage.setItem("token", result.token);
+      window.location.href = "/";
+      console.log("Login successful:", result.token);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  // const validateInputs = () => {
-  //   const email = document.getElementById("email") as HTMLInputElement;
-  //   const password = document.getElementById("password") as HTMLInputElement;
-
-  //   let isValid = true;
-
-  //   if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-  //     setEmailError(true);
-  //     setEmailErrorMessage("Please enter a valid email address.");
-  //     isValid = false;
-  //   } else {
-  //     setEmailError(false);
-  //     setEmailErrorMessage("");
-  //   }
-
-  
-
-  //   return isValid;
-  // };
+ 
 
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const handleMouseDownPassword = (event: { preventDefault: () => void; }) => {
+  const handleMouseDownPassword = (event: { preventDefault: () => void }) => {
     event.preventDefault();
   };
 
   return (
-    // <AppTheme {...props}>
+    
     <>
       <CssBaseline enableColorScheme />
       <SignInContainer
@@ -184,10 +183,10 @@ React.useEffect(() => {
                 autoFocus
                 {...register("email", {
                   required: "Email is must!",
-                    pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: "Please enter a valid email address.",
-                    },
+                  pattern: {
+                    value: /\S+@\S+\.\S+/,
+                    message: "Please enter a valid email address.",
+                  },
                 })}
               />
               {errors.email && (
@@ -251,7 +250,7 @@ React.useEffect(() => {
               label="Remember me"
             />
             <ForgotPassword open={open} handleClose={handleClose} />
-           
+
             {isSubmitting ? (
               <Button
                 disabled
@@ -284,14 +283,17 @@ React.useEffect(() => {
           </Box>
           <Divider>or</Divider>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert("Sign in with Google")}
-              startIcon={<GoogleIcon />}
-            >
-              Log in with Google
-            </Button>
+            <Link href="/api/auth/signin">
+              <Button
+                fullWidth
+                variant="outlined"
+                // onClick={() => signIn()}
+
+                startIcon={<GoogleIcon />}
+              >
+                Log in with Google
+              </Button>
+            </Link>
             <Button
               fullWidth
               variant="outlined"
