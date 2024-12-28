@@ -1,6 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 
 interface IPart extends Document {
+  id:number;
   OEMPartNumber: string;
   partNumber: string;
   name: string;
@@ -18,6 +19,11 @@ interface IPart extends Document {
 
 const partSchema = new Schema<IPart>(
   {
+    id: {
+      type: Number,
+      required: true,
+      unique: true,
+    },
     OEMPartNumber: {
       type: String,
       required: true,
@@ -78,6 +84,8 @@ const partSchema = new Schema<IPart>(
   }
 );
 
-const Part = model<IPart>("Part", partSchema);
+const Product = model<IPart>("Part", partSchema);
 
-export default Part;
+// export default Part;
+export { Product };
+export type { IPart };

@@ -1,7 +1,8 @@
 // import Image from "next/image";
 import Carousel from "../components/Slider/Slider";
-import { Cog } from "lucide-react";
+// import { Cog } from "lucide-react";
 // import Image from "next/image";
+import Link from "next/link";
 import {
   // Box,
   Typography,
@@ -9,7 +10,7 @@ import {
   Card,
   CardMedia,
   CardContent,
-  Link,
+  
 } from "@mui/material";
 
 import CTA from "@/components/CTA";
@@ -63,10 +64,10 @@ export default function Home() {
     },
   ];
 
-  const Brands =[
+  const Brands = [
     {
       title: "Hero MotoCorp",
-      image: "/Brands/HeroMotoCorp.webp",
+      image: "/Brands/HeroMoto.webp",
       key: "hero-motocorp",
     },
     {
@@ -123,30 +124,30 @@ export default function Home() {
       title: "Harley Davidson",
       image: "/Brands/HarleyDavidson.webp",
       key: "harley-davidson",
-    }
-  ]
-  const categories = [
-    { id: 1, name: "Engine Parts" },
-    { id: 2, name: "Suspension & Steering" },
-    { id: 3, name: "Brakes & Brake Parts" },
-    { id: 4, name: "Exhaust & Emissions" },
-    { id: 5, name: "Transmission & Drivetrain" },
-    { id: 6, name: "Electrical & Lighting" },
-    { id: 7, name: "Cooling & Heating" },
-    { id: 8, name: "Fuel Systems" },
-    { id: 9, name: "Interior Parts" },
-    { id: 10, name: "Exterior Parts" },
-    { id: 11, name: "Wheels & Tires" },
-    { id: 12, name: "Tools & Garage" },
-    { id: 13, name: "Performance Parts" },
-    { id: 14, name: "Body Parts" },
-    { id: 15, name: "Filters" },
-    { id: 16, name: "Oils & Fluids" },
-    { id: 17, name: "Accessories" },
-    { id: 18, name: "Batteries & Accessories" },
-    { id: 19, name: "Belts & Hoses" },
-    { id: 20, name: "Ignition System" },
+    },
   ];
+  // const categories = [
+  //   { id: 1, name: "Engine Parts" },
+  //   { id: 2, name: "Suspension & Steering" },
+  //   { id: 3, name: "Brakes & Brake Parts" },
+  //   { id: 4, name: "Exhaust & Emissions" },
+  //   { id: 5, name: "Transmission & Drivetrain" },
+  //   { id: 6, name: "Electrical & Lighting" },
+  //   { id: 7, name: "Cooling & Heating" },
+  //   { id: 8, name: "Fuel Systems" },
+  //   { id: 9, name: "Interior Parts" },
+  //   { id: 10, name: "Exterior Parts" },
+  //   { id: 11, name: "Wheels & Tires" },
+  //   { id: 12, name: "Tools & Garage" },
+  //   { id: 13, name: "Performance Parts" },
+  //   { id: 14, name: "Body Parts" },
+  //   { id: 15, name: "Filters" },
+  //   { id: 16, name: "Oils & Fluids" },
+  //   { id: 17, name: "Accessories" },
+  //   { id: 18, name: "Batteries & Accessories" },
+  //   { id: 19, name: "Belts & Hoses" },
+  //   { id: 20, name: "Ignition System" },
+  // ];
 
   const images = [
     "/Placeholder/ThirdHero.webp",
@@ -191,8 +192,7 @@ export default function Home() {
                         </Typography>
                         <Link
                           href={category.link}
-                          underline="hover"
-                          color="primary"
+                          style={{ textDecoration: "underline", color: "blue" }}
                         >
                           More &gt;
                         </Link>
@@ -201,7 +201,6 @@ export default function Home() {
                   </Grid>
                 ))}
               </Grid>
-             
             </div>
           </div>
         </section>
@@ -224,21 +223,22 @@ export default function Home() {
 
               <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {Brands.map((brand) => (
-                  <a
+                  <Link
                     key={brand.key}
-                    href="#"
+                    href={`/Brands/${brand.key}`}
                     className="flex items-center rounded-lg border border-gray-200 bg-white px-4 py-2 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
                   >
                     <Image
-                    src={brand.image}
-                    alt={brand.title}
-                    width={32}
-                    height={32}
+                      src={brand.image}
+                      alt={brand.title}
+                      width={32}
+                      height={32}
+                      className="rounded-lg m-2 "
                     />
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {brand.title}
                     </span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -264,18 +264,22 @@ export default function Home() {
                   Shop Now
                 </a>
               </div>
-              <div className="hidden md:col-span-5 md:mt-0 md:flex">
-                <img
+                <div className="hidden md:col-span-5 md:mt-0 md:flex">
+                <Image
                   className="dark:hidden"
                   src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/girl-shopping-list.svg"
                   alt="shopping illustration"
+                  width={500}
+                  height={500}
                 />
-                <img
+                <Image
                   className="hidden dark:block"
                   src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/girl-shopping-list-dark.svg"
                   alt="shopping illustration"
+                  width={500}
+                  height={500}
                 />
-              </div>
+                </div>
             </div>
           </section>
         </>

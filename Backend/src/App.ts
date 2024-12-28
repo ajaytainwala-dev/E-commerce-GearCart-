@@ -34,6 +34,7 @@ class App {
 
   private initializeMiddleware() {
     this.app.use(express.json());
+    this.app.use("/images", express.static("upload/images"));
     this.app.use(cors());
   }
 
@@ -53,7 +54,7 @@ class App {
         console.log(`App listening on the port ${this.port}`);
       });
     } catch (error) {
-      console.log("Error in starting the server with the port",error);
+      console.log("Error in starting the server with the port", error);
     }
   }
 }

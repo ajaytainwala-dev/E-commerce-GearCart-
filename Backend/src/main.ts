@@ -1,10 +1,14 @@
-import App from './App';
+import App from "./App";
 import authController from "./controllers/authController";
+import productController from "./controllers/productController";
 import TestController from "./controllers/testController";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
-const app = new App([new authController(),new TestController()], Number(process.env.PORT) || 3000);
+const app = new App(
+  [new authController(), new TestController(), new productController()],
+  Number(process.env.PORT) || 3000
+);
 
 app.listen();
 
