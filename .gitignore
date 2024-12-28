@@ -1,35 +1,76 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-frontend/node_modules
-frontend/.pnp
-frontend/.pnp.*
-frontend/.yarn/*
-frontend/!.yarn/patches
-frontend/!.yarn/plugins
-frontend/!.yarn/releases
-frontend/!.yarn/versions
+Frontend/node_modules
+Frontend/.pnp
+Frontend/.pnp.*
+Frontend/.yarn/*
+Frontend/!.yarn/patches
+Frontend/!.yarn/plugins
+Frontend/!.yarn/releases
+Frontend/!.yarn/versions
 
-# frontend/# testing
-frontend/coverage
+Backend/node_modules
+Backend/.pnp
+Backend/.pnp.*
+Backend/.yarn/*
+Backend/!.yarn/patches
+Backend/!.yarn/plugins
+Backend/!.yarn/releases
+Backend/!.yarn/versions
 
-# frontend/# next.js
-frontend/.next/
-frontend/out/
+# Frontend/# testing
+Frontend/coverage
 
-# frontend/# production
-frontend/build
-# frontend/# misc
-frontend/.DS_Store
-frontend/*.pem
-# frontend/# debug
-frontend/npm-debug.log*
-frontend/yarn-debug.log*
-frontend/yarn-error.log*
-frontend/.pnpm-debug.log*
-frontend/.env*
-# frontend/# vercel
-frontend/.vercel
-# frontend/# typescript
-frontend/*.tsbuildinfo
-frontend/next-env.d.ts
+# Backend/# testing
+Backend/coverage
+
+# Frontend/# next.js
+Frontend/.next/
+Frontend/out/
+
+# Backend/# next.js
+Backend/.next/
+Backend/out/
+
+# Frontend/# production
+Frontend/build
+
+# Backend/# production
+Backend/build
+
+# Frontend/# misc
+Frontend/.DS_Store
+Frontend/*.pem
+
+# Backend/# misc
+Backend/.DS_Store
+Backend/*.pem
+
+# Frontend/# debug
+Frontend/npm-debug.log*
+Frontend/yarn-debug.log*
+Frontend/yarn-error.log*
+Frontend/.pnpm-debug.log*
+Frontend/.env*
+
+# Backend/# debug
+Backend/npm-debug.log*
+Backend/yarn-debug.log*
+Backend/yarn-error.log*
+Backend/.pnpm-debug.log*
+Backend/.env*
+
+# Frontend/# vercel
+Frontend/.vercel
+
+# Backend/# vercel
+Backend/.vercel
+
+# Frontend/# typescript
+Frontend/*.tsbuildinfo
+Frontend/next-env.d.ts
+
+# Backend/# typescript
+Backend/*.tsbuildinfo
+Backend/next-env.d.ts

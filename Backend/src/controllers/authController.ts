@@ -263,7 +263,7 @@ class authController {
     console.log("Token :", JSON.stringify(RestToken));
     // console.log("Reset :",JSON.stringify(resetToken));
     await user.save();
-    const resetUrl = `http://localhost:5173/reset/${RestToken}`;
+    const resetUrl = `http://localhost:3000/Password/Reset/${RestToken}`;
     const message = `<!DOCTYPE html>
     <html lang="en">
     

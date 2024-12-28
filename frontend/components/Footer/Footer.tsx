@@ -2,6 +2,7 @@
 import React from 'react'
 import { Cog } from 'lucide-react';
 const Footer = () => {
+  const CurrentDate = new Date().getFullYear().toString();
   return (
     <>
       <footer className="text-gray-600  body-font dark:bg-gray-700 dark:text-gray-300">
@@ -136,7 +137,7 @@ const Footer = () => {
         <div className="bg-gray-100 dark:bg-gray-800">
           <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
             <p className="text-gray-500 text-sm text-center sm:text-left mx-auto">
-              © {new Date().getFullYear().toString()} Ajay Tainwala —
+              © {CurrentDate} Ajay Tainwala —
               <a
                 href="https://ajaytainwala-dev.github.io"
                 rel="noopener noreferrer"
@@ -146,7 +147,7 @@ const Footer = () => {
                 @ajaytainwala-dev
               </a>
             </p>
-            <span className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
+            <div className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
               <a className="text-gray-500">
                 <svg
                   fill="currentColor"
@@ -202,7 +203,7 @@ const Footer = () => {
                   <circle cx={4} cy={4} r={2} stroke="none" />
                 </svg>
               </a>
-            </span>
+            </div>
           </div>
         </div>
       </footer>

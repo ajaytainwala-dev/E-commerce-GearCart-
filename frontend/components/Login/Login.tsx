@@ -28,6 +28,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import IconButton from "@mui/material/IconButton";
 // import { useSession, signIn, signOut } from "next-auth/react";
 import { GoogleIcon, FacebookIcon } from "./CustomIcons";
+import { useRouter } from "next/navigation";
 // import AppTheme from "../shared-theme/AppTheme";
 // import ColorModeSelect from "../shared-theme/ColorModeSelect";
 
@@ -78,6 +79,7 @@ export default function SignIn() {
   // React Hook Form
   // const { isLogin } = useContext(AppContext);
 
+  const router = useRouter();
   const { register, handleSubmit, reset, formState } = useForm<{
     email: string;
     password: string;
@@ -120,16 +122,12 @@ export default function SignIn() {
       }
 
       const result = await response.json();
-      // document.cookie = `token=${result.token}; path=/; max-age=3600; secure; samesite=strict`;
       localStorage.setItem("token", result.token);
-      window.location.href = "/";
-      console.log("Login successful:", result.token);
+      router.push("/");
     } catch (error) {
       console.error(error);
     }
   };
-
- 
 
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -140,7 +138,6 @@ export default function SignIn() {
   };
 
   return (
-    
     <>
       <CssBaseline enableColorScheme />
       <SignInContainer
@@ -148,11 +145,7 @@ export default function SignIn() {
         justifyContent="space-between"
         sx={{ height: "auto" }}
       >
-        {/* <ColorModeSelect
-          sx={{ position: "fixed", top: "1rem", right: "1rem" }}
-        /> */}
         <Card variant="outlined">
-          {/* <SitemarkIcon /> */}
           <Typography
             component="h1"
             variant="h4"
@@ -203,15 +196,13 @@ export default function SignIn() {
                 Password
               </FormLabel>
               <OutlinedInput
-                // sx={{ width: "100%" }}
                 id="outlined-adornment-password"
                 autoComplete="current-password"
                 placeholder="••••••"
                 aria-label="Password"
-                // label="Password"
                 type={showPassword ? "text" : "password"}
                 {...register("password", {
-                  required: true, // Shorthand for required message
+                  required: true,
                   pattern: {
                     value:
                       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/,
