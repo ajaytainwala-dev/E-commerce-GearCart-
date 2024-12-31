@@ -27,7 +27,7 @@ const Carousel: React.FC<CarouselProps> = ({ items, interval = 3000 }) => {
   };
 
   return (
-    <div className="relative w-full h-[800px] overflow-hidden">
+    <div className="relative w-full h-[20rem] overflow-hidden">
       <div
         className="absolute inset-0 flex transition-transform ease-in-out duration-700"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}

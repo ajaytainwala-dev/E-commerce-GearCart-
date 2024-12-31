@@ -34,11 +34,11 @@ const settings = [
     href: "/Profile",
     icon: <UserCircle />,
   },
-  {
-    name: "Settings",
-    href: "/Settings",
-    icon: <Cog />,
-  },
+  // {
+  //   name: "Settings",
+  //   href: "/",
+  //   icon: <Cog />,
+  // },
   {
     name: "Logout",
     href: "/",

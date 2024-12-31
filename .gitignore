@@ -19,11 +19,23 @@ Backend/!.yarn/plugins
 Backend/!.yarn/releases
 Backend/!.yarn/versions
 
+Admin/frontend/node_modules
+Admin/frontend/.pnp
+Admin/frontend/.pnp.*
+Admin/frontend/.yarn/*
+Admin/frontend/!.yarn/patches
+Admin/frontend/!.yarn/plugins
+Admin/frontend/!.yarn/releases
+Admin/frontend/!.yarn/versions
+
 # Frontend/# testing
 Frontend/coverage
 
 # Backend/# testing
 Backend/coverage
+
+# Admin/frontend/# testing
+Admin/frontend/coverage
 
 # Frontend/# next.js
 Frontend/.next/
@@ -33,11 +45,18 @@ Frontend/out/
 Backend/.next/
 Backend/out/
 
+# Admin/frontend/# next.js
+Admin/frontend/.next/
+Admin/frontend/out/
+
 # Frontend/# production
 Frontend/build
 
 # Backend/# production
 Backend/build
+
+# Admin/frontend/# production
+Admin/frontend/build
 
 # Frontend/# misc
 Frontend/.DS_Store
@@ -46,6 +65,10 @@ Frontend/*.pem
 # Backend/# misc
 Backend/.DS_Store
 Backend/*.pem
+
+# Admin/frontend/# misc
+Admin/frontend/.DS_Store
+Admin/frontend/*.pem
 
 # Frontend/# debug
 Frontend/npm-debug.log*
@@ -61,11 +84,21 @@ Backend/yarn-error.log*
 Backend/.pnpm-debug.log*
 Backend/.env*
 
+# Admin/frontend/# debug
+Admin/frontend/npm-debug.log*
+Admin/frontend/yarn-debug.log*
+Admin/frontend/yarn-error.log*
+Admin/frontend/.pnpm-debug.log*
+Admin/frontend/.env*
+
 # Frontend/# vercel
 Frontend/.vercel
 
 # Backend/# vercel
 Backend/.vercel
+
+# Admin/frontend/# vercel
+Admin/frontend/.vercel
 
 # Frontend/# typescript
 Frontend/*.tsbuildinfo
@@ -74,3 +107,7 @@ Frontend/next-env.d.ts
 # Backend/# typescript
 Backend/*.tsbuildinfo
 Backend/next-env.d.ts
+
+# Admin/frontend/# typescript
+Admin/frontend/*.tsbuildinfo
+Admin/frontend/next-env.d.ts

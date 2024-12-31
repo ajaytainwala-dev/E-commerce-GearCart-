@@ -38,7 +38,7 @@ const FeatureSection = () => {
             item
             key={index}
             xs={12}
-            sm={6}
+            sm={4}
             md={3}
             textAlign="center"
             display="flex"

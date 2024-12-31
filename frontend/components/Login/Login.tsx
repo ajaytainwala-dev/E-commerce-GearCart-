@@ -27,7 +27,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 // import InputLabel from "@mui/material/InputLabel";
 import IconButton from "@mui/material/IconButton";
 // import { useSession, signIn, signOut } from "next-auth/react";
-import { GoogleIcon, FacebookIcon } from "./CustomIcons";
+// import { GoogleIcon, FacebookIcon } from "./CustomIcons";
 import { useRouter } from "next/navigation";
 // import AppTheme from "../shared-theme/AppTheme";
 // import ColorModeSelect from "../shared-theme/ColorModeSelect";
@@ -273,7 +273,7 @@ export default function SignIn() {
             </Link>
           </Box>
           <Divider>or</Divider>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {/* <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <Link href="/api/auth/signin">
               <Button
                 fullWidth
@@ -303,7 +303,7 @@ export default function SignIn() {
                 Sign up
               </Link>
             </Typography>
-          </Box>
+          </Box> */}
         </Card>
       </SignInContainer>
     </>
