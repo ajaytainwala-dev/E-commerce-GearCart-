@@ -7,7 +7,7 @@ interface FetchState<T> {
   error: Error | null;
 }
 
-function useFetch<T>(url: string): FetchState<T> {
+export function useFetch<T>(url: string): FetchState<T> {
   const [state, setState] = useState<FetchState<T>>({
     data: null,
     loading: true,
@@ -33,4 +33,4 @@ function useFetch<T>(url: string): FetchState<T> {
 
   return state;
 }
-export default useFetch;
+// export default useFetch;

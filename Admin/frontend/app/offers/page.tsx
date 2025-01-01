@@ -10,7 +10,7 @@ import {
     Box,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
-import  useFetch  from "../hooks/useFetch";
+import  {useFetch } from "../hooks/useFetch";
 import { TextField } from "@mui/material";
 
 interface Product {
