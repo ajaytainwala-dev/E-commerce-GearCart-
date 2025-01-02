@@ -28,7 +28,7 @@ const drawerWidth = 240;
 const menuItems = [
   { text: "Dashboard", icon: <Dashboard />, href: "/" },
   { text: "Products", icon: <Inventory />, href: "/products" },
-  { text: "Users", icon: <People />, href: "/users" },
+  { text: "Users", icon: <People />, href: "/Users" },
   { text: "Offers", icon: <LocalOffer />, href: "/offers" },
   { text: "Orders", icon: <ShoppingCart />, href: "/orders" },
 ];
@@ -46,7 +46,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <html lang="en">
-      <div className="flex h-screen">
+      <body className="flex-grow p-6 mt-16 ml-60">
         <AppBar position="fixed" className="z-50">
           <Toolbar>
             <IconButton
@@ -84,7 +84,7 @@ export default function Layout({ children }: LayoutProps) {
           <List>
             {menuItems.map((item) => (
               <Link href={item.href} key={item.text} passHref>
-                <ListItem component="a">
+                <ListItem >
                   <ListItemIcon>{item.icon}</ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItem>
@@ -92,8 +92,8 @@ export default function Layout({ children }: LayoutProps) {
             ))}
           </List>
         </Drawer>
-        <body className="flex-grow p-6 mt-16 ml-60">{children}</body>
-      </div>
+        {children}
+      </body>
     </html>
   );
 }

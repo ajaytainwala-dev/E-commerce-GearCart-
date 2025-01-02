@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import  Purchase  from "../models/Purchase";
+import Purchase from "../models/Purchase";
 
 class PurchaseController {
   public path: string = "/purchases";

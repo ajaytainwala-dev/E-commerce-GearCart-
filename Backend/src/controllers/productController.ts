@@ -13,7 +13,7 @@ import { Router, Request, Response } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import { Product } from "../models/Product";
-import type { IPart } from "../models/Product";
+// import type { IPart } from "../models/Product";
 import multer from "multer";
 import path from "path";
 

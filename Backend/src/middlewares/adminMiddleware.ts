@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { Admin } from "../models/Admin";
+import { User } from "../models/User";
 import jwt from "jsonwebtoken";
 
 class FetchUserMiddleware {
@@ -23,9 +23,8 @@ class FetchUserMiddleware {
       if (!userId) {
         return res.status(401).json({ message: "Invalid token" });
       }
-      
 
-      const user = await Admin.findById(userId);
+      const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }

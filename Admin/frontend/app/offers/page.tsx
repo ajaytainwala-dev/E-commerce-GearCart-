@@ -17,7 +17,11 @@ interface Product {
     id: number;
     name: string;
 }
-
+const products = [
+  { id: 1, name: "Product 1", price: 19.99, stock: 100 },
+  { id: 2, name: "Product 2", price: 29.99, stock: 50 },
+  { id: 3, name: "Product 3", price: 39.99, stock: 75 },
+];
 interface OfferFormData {
     productId: string;
     discountPercentage: string;
@@ -29,20 +33,17 @@ export default function OfferPage() {
         handleSubmit,
         formState: { errors },
     } = useForm<OfferFormData>();
-    const {
-        data: products,
-        loading,
-        error,
-    } = useFetch<Product[]>("/api/products");
+    
 
     const onSubmit = async (data: OfferFormData) => {
         try {
-            const response = await fetch("/api/offers", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
+            
+            const response = await fetch("http://localhost:6000/admin/offer", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
             });
 
             if (!response.ok) {
@@ -57,10 +58,6 @@ export default function OfferPage() {
             alert("Failed to create offer. Please try again.");
         }
     };
-
-    if (loading) return <CircularProgress />;
-    if (error)
-        return <Typography color="error">Error: {error.message}</Typography>;
 
     return (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">

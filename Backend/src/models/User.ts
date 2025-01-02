@@ -18,9 +18,10 @@ export interface IUser extends Document {
   };
   googleId?: string;
   facebookId?: string;
+  isAdmin: boolean;
   resetPasswordToken?: string;
   resetPasswordExpire?: string;
-//   isAdmin: boolean;
+  //   isAdmin: boolean;
   getResetPasswordToken(): Promise<string>;
 }
 
@@ -44,7 +45,7 @@ const UserSchema: Schema = new Schema(
     },
     googleId: { type: String },
     facebookId: { type: String },
-    // isAdmin: { type: Boolean, default: false },
+    isAdmin: { type: Boolean, default: false },
     resetPasswordToken: String,
     resetPasswordExpire: String,
   },

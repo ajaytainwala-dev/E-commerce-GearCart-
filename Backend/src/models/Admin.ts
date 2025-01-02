@@ -94,6 +94,6 @@ const AdminSchemaZod = z.object({
   // isAdmin: z.boolean().default(false),
 });
 
-const Admin = mongoose.model<IAdmin>("User", AdminSchema);
+const Admin = mongoose.model<IAdmin>("Admin", AdminSchema);
 
 export { Admin, AdminSchemaZod };

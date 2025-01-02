@@ -1,5 +1,5 @@
 import { Schema, model, Document } from "mongoose";
-import { User } from "./User";
+// import { User } from "./User";
 
 interface IPurchase extends Document {
   userId: Schema.Types.ObjectId;

@@ -1,7 +1,7 @@
 import { Schema, model, Document } from "mongoose";
 
 interface IPart extends Document {
-  id:number;
+  id: number;
   OEMPartNumber: string;
   partNumber: string;
   name: string;

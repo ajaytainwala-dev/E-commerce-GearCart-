@@ -1,8 +1,9 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import multer from "multer";
-import {Product as  Part } from "../models/Product";
-import { User } from "../models//User";
-import Purchase  from "../models/Purchase";
+import { Product as Part } from "../models/Product";
+import { User } from "../models/User";
+import Purchase from "../models/Purchase";
+import AuthMiddleware from "../middlewares/adminMiddleware";
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
@@ -24,18 +25,38 @@ class AdminController {
   }
 
   private initializeRoutes() {
+    this.router.get(`/users`, AuthMiddleware, this.getUsers);
     this.router.post(
       `/add-product`,
+      AuthMiddleware,
       upload.single("image"),
       this.addProduct
     );
-    this.router.get(`/dashboard`, this.getDashboardData);
-    this.router.get(`/products`, this.getProductsInStock);
-    this.router.post(`/offer`, this.addOffer);
-    this.router.get(`/orders`, this.viewOrders);
+    this.router.get(`/dashboard`, AuthMiddleware, this.getDashboardData);
+    this.router.get(`/products`, AuthMiddleware, this.getProductsInStock);
+    this.router.post(`/offer`, AuthMiddleware, this.addOffer);
+    this.router.get(`/orders`, AuthMiddleware, this.viewOrders);
   }
 
-  // Add a new product
+  private getUsers = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { isAdmin } = (req as any).user.id;
+      if (!isAdmin) {
+        return res.status(403).json({ error: "Unauthorized" });
+        console.log("unauthorized");
+      }
+      const users = await User.find();
+      return res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" });
+      return next(error);
+    }
+  };
+
   private addProduct = async (req: Request, res: Response) => {
     const {
       name,
@@ -68,7 +89,6 @@ class AdminController {
     }
   };
 
-  // Get dashboard data
   private getDashboardData = async (req: Request, res: Response) => {
     try {
       const totalUsers = await User.countDocuments();
