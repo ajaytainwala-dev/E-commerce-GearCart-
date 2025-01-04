@@ -15,6 +15,7 @@
     "@fontsource/roboto": "^5.1.0",
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
+    "@types/js-cookie": "^3.0.6",
     "js-cookie": "^3.0.5",
     "lucide": "^0.468.0",
     "lucide-react": "^0.468.0",

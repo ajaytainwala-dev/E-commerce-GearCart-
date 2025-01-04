@@ -29,9 +29,10 @@ class FetchUserMiddleware {
         return res.status(404).json({ message: "User not found" });
       }
       if (!user.isAdmin) {
-        return res.status(403).json({ message: "Unauthorized" });
+
+        return res.status(403).json({ message: "Unauthorized user" });
       }
-      (req as any).user = user;
+      return (req as any).user = user;
       next();
     } catch (error) {
       res.status(500).json({ message: "Server error", error });
@@ -45,9 +46,7 @@ class FetchUserMiddleware {
       if (!process.env.JWT_SECRET) {
         throw new Error("JWT_SECRET is not defined");
       }
-      const decoded = jwt.verify(token, process.env.JWT_SECRET) as unknown as {
-        userId: string;
-      };
+      const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string };
       return decoded.userId;
     } catch (error) {
       return null;

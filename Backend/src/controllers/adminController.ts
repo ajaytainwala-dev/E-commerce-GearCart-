@@ -25,11 +25,11 @@ class AdminController {
   }
 
   private initializeRoutes() {
-    this.router.get(`/users`, AuthMiddleware, this.getUsers);
+    this.router.get(`/users`,AuthMiddleware, this.getUsers);
     this.router.post(
       `/add-product`,
       AuthMiddleware,
-      upload.single("image"),
+      upload.array("image",1),
       this.addProduct
     );
     this.router.get(`/dashboard`, AuthMiddleware, this.getDashboardData);
@@ -44,15 +44,18 @@ class AdminController {
     next: NextFunction
   ) => {
     try {
-      const { isAdmin } = (req as any).user.id;
+      const isAdmin = (req as any).user.isAdmin
       if (!isAdmin) {
         return res.status(403).json({ error: "Unauthorized" });
-        console.log("unauthorized");
       }
-      const users = await User.find();
-      return res.status(200).json(users);
+// console.log(req.user.isAdmin)
+      const users = await User.find().select("-password");
+      const nonAdminUsers = users.filter(user => !user.isAdmin);
+      return res.status(200).json(nonAdminUsers);
+    
     } catch (error) {
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: "Controller Internal Server Error" });
+      console.error(error);
       return next(error);
     }
   };

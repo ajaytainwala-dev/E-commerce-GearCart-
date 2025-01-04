@@ -209,6 +209,9 @@ class ProductController {
     try {
       const { category } = req.params;
       const products = await Product.find({ category: category });
+      if(!products) {
+        return res.status(404).json({ success: false, message: "No products found" });
+      }
       res.status(200).json({ success: true, products: products });
     } catch (error) {
       res
@@ -221,6 +224,9 @@ class ProductController {
     try {
       const { query } = req.query;
       const products = await Product.find({ query });
+      if(products.length === 0 || products.length === null) {
+        return res.status(404).json({ success: false, message: "No products found" });
+      }
       res.status(200).json({ success: true, products: products });
     } catch (error) {
       res

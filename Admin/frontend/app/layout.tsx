@@ -26,7 +26,7 @@ import Link from "next/link";
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: "Dashboard", icon: <Dashboard />, href: "/" },
+  { text: "Dashboard", icon: <Dashboard />, href: "/Dashboard" },
   { text: "Products", icon: <Inventory />, href: "/products" },
   { text: "Users", icon: <People />, href: "/Users" },
   { text: "Offers", icon: <LocalOffer />, href: "/offers" },

@@ -1,109 +1,187 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { Typography, TextField, Button, Paper, CircularProgress } from '@mui/material'
-import { useFetch } from '../../hooks/useFetch'
+import React, { useState } from "react";
+import { Typography, TextField, Button, Paper } from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
 
-interface ProductFormData {
-  name: string
-  price: string
-  stock: string
-}
+
 
 export default function ProductForm() {
-  const router = useRouter()
-  const { action, id } = useParams()
-  const isEditing = action === 'edit'
+  type  IPart = {
+    id: number;
+    OEMPartNumber: string;
+    partNumber: string;
+    name: string;
+    brand: string;
+    category: string;
+    price: number;
+    discount: number;
+    stock: number;
+    description: string;
+    vehicleType: string;
+    compatibility: string[];
+    imageUrl: string[];
+    supplierName: string;
+  };
 
-  const [formData, setFormData] = useState<ProductFormData>({
-    name: '',
-    price: '',
-    stock: '',
-  })
 
-  const { data: product, loading, error } = useFetch<ProductFormData>(
-    isEditing ? `/api/products/${id}` : null
-  )
 
-  useEffect(() => {
-    if (isEditing && product) {
-      setFormData(product)
-    }
-  }, [isEditing, product])
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IPart>();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData(prevData => ({ ...prevData, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      const url = isEditing ? `/api/products/${id}` : '/api/products'
-      const method = isEditing ? 'PUT' : 'POST'
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      router.push('/products')
-    } catch (error) {
-      console.error('Failed to submit form:', error)
-      alert('Failed to submit form. Please try again.')
-    }
-  }
-
-  if (loading) {
-    return <CircularProgress />
-  }
-
-  if (error) {
-    return <Typography color="error">Error: {error.message}</Typography>
-  }
+  const onSubmit = async (data: IPart) => {
+  
+  };
 
   return (
     <Paper className="p-6 max-w-md mx-auto">
       <Typography variant="h4" gutterBottom>
-        {isEditing ? 'Edit Product' : 'Add New Product'}
+        {isEditing ? "Edit Product" : "Add New Product"}
       </Typography>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <TextField
-          fullWidth
-          label="Product Name"
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+      >
+        <Controller
           name="name"
-          value={formData.name}
-          onChange={handleChange}
-          required
+          control={control}
+          rules={{ required: "Product name is required" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Product Name"
+              error={!!errors.name}
+              helperText={errors.name ? errors.name.message : ""}
+            />
+          )}
         />
-        <TextField
-          fullWidth
-          label="Price"
+        <Controller
           name="price"
-          type="number"
-          value={formData.price}
-          onChange={handleChange}
-          required
+          control={control}
+          rules={{ required: "Price is required" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Price"
+              type="number"
+              error={!!errors.price}
+              helperText={errors.price ? errors.price.message : ""}
+            />
+          )}
         />
-        <TextField
-          fullWidth
-          label="Stock"
+        <Controller
           name="stock"
-          type="number"
-          value={formData.stock}
-          onChange={handleChange}
-          required
+          control={control}
+          rules={{ required: "Stock is required" }}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Stock"
+              type="number"
+              error={!!errors.stock}
+              helperText={errors.stock ? errors.stock.message : ""}
+            />
+          )}
+        />
+        <Controller
+          name="OEMPartNumber"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} fullWidth label="OEM Part Number" />
+          )}
+        />
+        <Controller
+          name="partNumber"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} fullWidth label="Part Number" />
+          )}
+        />
+        <Controller
+          name="brand"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} fullWidth label="Brand" />
+          )}
+        />
+        <Controller
+          name="category"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} fullWidth label="Category" />
+          )}
+        />
+        <Controller
+          name="discount"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} fullWidth label="Discount" type="number" />
+          )}
+        />
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              {...field}
+              fullWidth
+              label="Description"
+              multiline
+              rows={4}
+            />
+          )}
+        />
+        <Controller
+          name="vehicleType"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} fullWidth label="Vehicle Type" />
+          )}
+        />
+        <Controller
+          name="compatibility"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} fullWidth label="Compatibility" />
+          )}
+        />
+        <Controller
+          name="imageUrl"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} fullWidth label="Image URL" />
+          )}
+        />
+        <Controller
+          name="supplierName"
+          control={control}
+          render={({ field }) => (
+            <TextField {...field} fullWidth label="Supplier Name" />
+          )}
         />
         <Button type="submit" variant="contained" color="primary">
-          {isEditing ? 'Update Product' : 'Add Product'}
+          {isEditing ? "Update Product" : "Add Product"}
         </Button>
+        <input
+          accept="image/*"
+          style={{ display: "none" }}
+          id="raised-button-file"
+          multiple
+          type="file"
+        />
+        <label htmlFor="raised-button-file">
+          <Button variant="contained" component="span">
+            Upload Image
+          </Button>
+        </label>
       </form>
     </Paper>
-  )
+  );
 }
-

@@ -20,47 +20,47 @@ export default function Home() {
     {
       title: "AIR FILTERS (PAPER)",
       image: "/Category/AirFilter.webp", // Replace with actual image path
-      link: "/categories/air-filters",
+      link: "/Category/air-filters",
     },
     {
       title: "BOLTS & NUTS",
       image: "/Category/BoltNut.webp", // Replace with actual image path
-      link: "/categories/bolts-nuts",
+      link: "/Category/bolts-nuts",
     },
     {
       title: "CENTRE STANDS",
       image: "/Category/CenterStand.webp", // Replace with actual image path
-      link: "/categories/centre-stands",
+      link: "/Category/centre-stands",
     },
     {
       title: "CRASH GUARDS",
       image: "/Category/CrashGuard.webp", // Replace with actual image path
-      link: "/categories/centre-stands",
+      link: "/Category/centre-stands",
     },
     {
       title: "Fork Main Tubes",
       image: "/Category/ForkMainTube.webp", // Replace with actual image path
-      link: "/categories/centre-stands",
+      link: "/Category/centre-stands",
     },
     {
       title: "Footrest Rods",
       image: "/Category/FootRestRod.webp", // Replace with actual image path
-      link: "/categories/centre-stands",
+      link: "/Category/centre-stands",
     },
     {
       title: "Fork & Fork ASSY",
       image: "/Category/ForkAssy.webp", // Replace with actual image path
-      link: "/categories/centre-stands",
+      link: "/Category/centre-stands",
     },
     {
       title: "Wheel Rims",
       image: "/Category/WheelRim.webp", // Replace with actual image path
-      link: "/categories/centre-stands",
+      link: "/Category/centre-stands",
     },
     {
       title: "Clutch Pulleys",
       image: "/Category/ClutchPulley.webp", // Replace with actual image path
-      link: "/categories/centre-stands",
+      link: "/Category/centre-stands",
     },
   ];
 
@@ -257,12 +257,12 @@ export default function Home() {
                 <p className="mb-4 max-w-2xl text-gray-500 dark:text-gray-400 md:mb-12 md:text-lg mb-3 lg:mb-5 lg:text-xl">
                   Don&apos;t Wait - Limited Stock at Unbeatable Prices!
                 </p>
-                <a
-                  href="#"
+                <Link
+                  href=""
                   className="inline-block rounded-lg bg-primary-700 px-6 py-3.5 text-center font-medium text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Shop Now
-                </a>
+                </Link>
               </div>
                 <div className="hidden md:col-span-5 md:mt-0 md:flex">
                 <Image

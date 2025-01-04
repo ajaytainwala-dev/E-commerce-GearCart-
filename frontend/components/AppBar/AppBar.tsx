@@ -11,10 +11,12 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
+import {useForm} from "react-hook-form";
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
+import { Alert } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import {
   Cog,
@@ -23,6 +25,7 @@ import {
   LogIn,
   LogOut,
   UserCircle,
+  Search,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -46,8 +49,16 @@ const settings = [
   },
 ];
 
+interface Search{
+  search:string;
+}
 const cache = createCache({ key: "css", prepend: true });
 function ResponsiveAppBar() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  }=useForm<Search>();
   const { isLogin } = useContext(AppContext);
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -71,6 +82,23 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const doSubmit = (data:Search) => {
+    console.log(data);
+    const sendData=async()=>{
+      try {
+        const response = await fetch("http://localhost:5000/product/search")
+        const data = await response.json();
+        console.log(data);
+        if(data.success === false )
+        {
+          return <Alert severity="error">{data.message}</Alert>
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    sendData();
+  };
   return (
     <CacheProvider value={cache}>
       <AppBar position="static" sx={{ bgcolor: "#ffff", color: "black" }}>
@@ -162,17 +190,17 @@ function ResponsiveAppBar() {
                 {page}
               </Button>
             ))} */}
-              <form className="mx-auto w-[20rem] ">
+              <form className="mx-auto w-[20rem] " onSubmit={handleSubmit(doSubmit)}>
                 <label
                   htmlFor="default-search"
-                  className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+                  className="mb-2 text-sm font-medium text-gray-900 sr-only "
                 >
                   Search
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg
-                      className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                      className="w-4 h-4 text-gray-500 "
                       aria-hidden="true"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -190,7 +218,8 @@ function ResponsiveAppBar() {
                   <input
                     type="search"
                     id="default-search"
-                    className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    {...register("search", { required: true })}
+                    className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Search Mockups, Logos..."
                     required
                   />
@@ -204,6 +233,7 @@ function ResponsiveAppBar() {
               </form>
             </Box>
             <Box sx={{ flexgrow: 1 }}>
+              <Link href={"/Cart"}>
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{
@@ -220,6 +250,7 @@ function ResponsiveAppBar() {
                 <ShoppingCart size={24} />
                 Cart
               </Button>
+              </Link>
             </Box>
             {!isLogin && (
               <>

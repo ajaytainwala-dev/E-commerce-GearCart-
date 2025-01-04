@@ -13,11 +13,10 @@ export default function Page() {
   const fetchCategoryProducts = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/product/category/${slug}`
+        `http://localhost:5000/product/Brands/${slug}`
       );
       const data = await response.json();
       console.log(data);
-      setProducts(data);
     } catch (error) {
       console.log(error);
     }

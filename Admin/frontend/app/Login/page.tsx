@@ -18,7 +18,7 @@ const LoginPage: React.FC = () => {
           headers['Authorization'] = `Bearer ${token}`;
         }
 
-        const response = await fetch("http://127.0.0.1:6000/admin/login", {
+        const response = await fetch("http://127.0.0.1:5000/auth/login", {
           method: "POST",
           headers,
           body: JSON.stringify(data),
@@ -34,47 +34,48 @@ const LoginPage: React.FC = () => {
 
         const result = await response.json(); // Parse the JSON response
         console.log("API Response:", result);
-        router.push('/dashboard');
+        localStorage.setItem("token", result.token);
+        router.push('/Dashboard');
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6 text-center">Admin Login</h2>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                            Email
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            {...register('email', { required: 'Email is required' })}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                        {errors.email && typeof errors.email.message === 'string' && <p className="text-red-500 text-xs italic">{errors.email.message}</p>}
-                    </div>
-                    <div className="mb-6">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            {...register('password', { required: 'Password is required' })}
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                        {errors.password && typeof errors.password.message === 'string' && <p className="text-red-500 text-xs italic">{errors.password.message}</p>}
-                    </div>
-                    <div className="flex items-center justify-between">
-                        <button
-                            type="submit"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        >
-                            Login
-                        </button>
-                    </div>
-                </form>
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f7fafc' }}>
+            <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '0.375rem', boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', width: '100%', maxWidth: '28rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1.5rem', textAlign: 'center' }}>Admin Login</h2>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', color: '#4a5568', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }} htmlFor="email">
+                    Email
+                </label>
+                <input
+                    type="email"
+                    id="email"
+                    {...register('email', { required: 'Email is required' })}
+                    style={{ boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', appearance: 'none', border: '1px solid #e2e8f0', borderRadius: '0.375rem', width: '100%', padding: '0.5rem 0.75rem', color: '#4a5568', lineHeight: '1.25' }}
+                />
+                {errors.email && typeof errors.email.message === 'string' && <p style={{ color: '#f56565', fontSize: '0.75rem', fontStyle: 'italic' }}>{errors.email.message}</p>}
+                </div>
+                <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', color: '#4a5568', fontSize: '0.875rem', fontWeight: 'bold', marginBottom: '0.5rem' }} htmlFor="password">
+                    Password
+                </label>
+                <input
+                    type="password"
+                    id="password"
+                    {...register('password', { required: 'Password is required' })}
+                    style={{ boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)', appearance: 'none', border: '1px solid #e2e8f0', borderRadius: '0.375rem', width: '100%', padding: '0.5rem 0.75rem', color: '#4a5568', marginBottom: '0.75rem', lineHeight: '1.25' }}
+                />
+                {errors.password && typeof errors.password.message === 'string' && <p style={{ color: '#f56565', fontSize: '0.75rem', fontStyle: 'italic' }}>{errors.password.message}</p>}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <button
+                    type="submit"
+                    style={{ backgroundColor: '#4299e1', color: 'white', fontWeight: 'bold', padding: '0.5rem 1rem', borderRadius: '0.375rem' }}
+                >
+                    Login
+                </button>
+                </div>
+            </form>
             </div>
         </div>
     );

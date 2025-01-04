@@ -88,6 +88,10 @@ export default function SignIn() {
   const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
   React.useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      router.push("/");
+    }
     if (isSubmitSuccessful) {
       reset({ email: "", password: "" });
     }
