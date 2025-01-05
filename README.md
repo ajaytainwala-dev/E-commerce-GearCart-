@@ -2,7 +2,7 @@
 
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 ![GitHub stars](https://img.shields.io/github/stars/your-repo-url.svg)
-![GitHub forks](https://img.shields.io/github/forks/your-repo-url.svg)
+![GitHub forks](https://img.shields.io/github/forks/github.com/ajaytainwala-dev/E-commerce-Gear-Cart-.svg)
 
 ![AutoParts Nexus Logo](https://via.placeholder.com/150x150.png?text=Logo)
 
@@ -119,4 +119,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 Please read CONTRIBUTING.md for details on our code of conduct and the process for submitting pull requests.
 
 ## 📧 Contact
-If you have any questions or feedback, feel free to reach out to us at contact@example.com.
+If you have any questions or feedback, feel free to reach out to us at ajaytainwala@gmail.com.
