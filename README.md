@@ -1,4 +1,4 @@
-# 🚗 AutoParts Nexus - E-commerce Platform for Automobile Spare Parts
+# 🚗 AutoParts Gear Cart - E-commerce Platform for Automobile Spare Parts
 
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 ![GitHub stars](https://img.shields.io/github/stars/your-repo-url.svg)
