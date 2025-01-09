@@ -23,6 +23,7 @@ const partSchema = new Schema<IPart>(
       type: Number,
       required: true,
       unique: true,
+      auto: true,
     },
     OEMPartNumber: {
       type: String,

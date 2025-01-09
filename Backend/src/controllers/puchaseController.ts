@@ -10,9 +10,9 @@ class PurchaseController {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}/`, this.createPurchase);
-    this.router.get(`${this.path}/:id`, this.getPurchaseById);
-    this.router.put(`${this.path}/:id/status`, this.updatePurchaseStatus);
+    this.router.post(`/`, this.createPurchase);
+    this.router.get(`/:id`, this.getPurchaseById);
+    this.router.put(`/:id/status`, this.updatePurchaseStatus);
   }
 
   // Create a new purchase

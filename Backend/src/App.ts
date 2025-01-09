@@ -2,7 +2,7 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-
+import bodypaser from "body-parser";
 dotenv.config();
 
 class App {
@@ -36,6 +36,8 @@ class App {
     this.app.use(express.json());
     this.app.use("/images", express.static("upload/images"));
     this.app.use(cors());
+    this.app.use(bodypaser.json());
+    this.app.use(bodypaser.urlencoded({ extended: true }));
   }
 
   private initializeController(controller: any[]) {
