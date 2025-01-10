@@ -7,7 +7,7 @@ interface FetchState<T> {
   error: Error | null;
 }
 
-export function useFetch<T>(url: string): FetchState<T> {
+export function useFetch<T>(url: string,ApiMethod:string): FetchState<T> {
   const [state, setState] = useState<FetchState<T>>({
     data: null,
     loading: true,
@@ -17,7 +17,15 @@ export function useFetch<T>(url: string): FetchState<T> {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(url);
+        const response = await fetch(url,
+          {
+            method: ApiMethod,
+            headers: {
+              "Content-Type": "application/json", 
+              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            }
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -29,7 +37,7 @@ export function useFetch<T>(url: string): FetchState<T> {
     };
 
     fetchData();
-  }, [url]);
+  }, [url,ApiMethod]);
 
   return state;
 }

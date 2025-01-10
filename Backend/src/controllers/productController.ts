@@ -16,6 +16,7 @@ import { Product } from "../models/Product";
 // import type { IPart } from "../models/Product";
 import multer from "multer";
 import path from "path";
+import AdminMiddleware from "../middlewares/adminMiddleware";
 
 class ProductController {
   public path: string = "/product";
@@ -54,15 +55,34 @@ class ProductController {
   });
 
   private initializeRoutes() {
+    this.router.get("/product/:id", AdminMiddleware, this.getParticularProduct);
     this.router.get("/allproducts", this.allGetProducts);
     this.router.post("/upload", this.upload.single("image"), this.uploadImage);
-    this.router.delete("/remove/:id", this.removeProduct);
+    this.router.delete("/remove/:id", AdminMiddleware, this.removeProduct);
     this.router.post("/addproduct", this.createProduct);
     this.router.get("/brand/:brand", this.getProductsByBrand);
     this.router.get("/category/:category", this.getProductsByCategory);
     this.router.get("/search", this.searchProduct);
     this.router.get("/partnumber/:partNumber", this.getProductsByPartNumber);
     this.router.put("/update/:id", this.updateProduct);
+  }
+
+  private getParticularProduct = async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const product = await Product.findById(id);
+      if (!product) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found" });
+      }
+      res.status(200).json({ success: true, product: product });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+      
+    }
   }
 
   //   Get all product
@@ -127,11 +147,12 @@ class ProductController {
   ): Promise<Response> => {
     try {
       const { id } = req.params;
-      await Product.findByIdAndDelete({ id: id });
+      await Product.findByIdAndDelete(id);
       return res
         .status(200)
         .json({ success: true, message: "Product removed successfully" });
     } catch (error) {
+      console.error(error);
       return res
         .status(400)
         .json({ success: false, message: "Failed to remove product" });
@@ -209,8 +230,10 @@ class ProductController {
     try {
       const { category } = req.params;
       const products = await Product.find({ category: category });
-      if(!products) {
-        return res.status(404).json({ success: false, message: "No products found" });
+      if (!products) {
+        return res
+          .status(404)
+          .json({ success: false, message: "No products found" });
       }
       res.status(200).json({ success: true, products: products });
     } catch (error) {
@@ -224,8 +247,10 @@ class ProductController {
     try {
       const { query } = req.query;
       const products = await Product.find({ query });
-      if(products.length === 0 || products.length === null) {
-        return res.status(404).json({ success: false, message: "No products found" });
+      if (products.length === 0 || products.length === null) {
+        return res
+          .status(404)
+          .json({ success: false, message: "No products found" });
       }
       res.status(200).json({ success: true, products: products });
     } catch (error) {

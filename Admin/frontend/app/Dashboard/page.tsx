@@ -8,27 +8,20 @@ import {
   AttachMoney,
   ShoppingCart,
 } from "@mui/icons-material";
-// import useFetch from "./hooks/useFetch";
 
-// const stats = [
-//   { title: "Total Products", value: 150, icon: <Inventory /> },
-//   { title: "Total Users", value: 1200, icon: <People /> },
-//   { title: "Total Revenue", value: "$15,000", icon: <AttachMoney /> },
-//   { title: "Total Orders", value: 450, icon: <ShoppingCart /> },
-// ];
 
 export default function Dashboard() {
-    const [users, setUsers] = React.useState([]);
-    const [userCount , setUserCount] = React.useState(0);
+    // const [users, setUsers] = React.useState([]);
+    // const [userCount , setUserCount] = React.useState(0);
     const [stats, setStats] = React.useState([
-        { title: "Total Users", value: 10, icon: <People /> },
-        { title: "Total Products", value: 150, icon: <Inventory /> },
-        { title: "Total Revenue", value: "1000", icon: <AttachMoney /> },
-        { title: "Total Orders", value: 10, icon: <ShoppingCart /> },
+        { title: "Total Users", value: 0, icon: <People /> },
+        { title: "Total Products", value: 0, icon: <Inventory /> },
+        { title: "Total Revenue", value: "0", icon: <AttachMoney /> },
+        { title: "Total Orders", value: 0, icon: <ShoppingCart /> },
     ]);
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/admin/users", {
+      const response = await fetch("http://127.0.0.1:5000/admin/dashboard", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -37,32 +30,35 @@ export default function Dashboard() {
       });
       console.log(response);
         const data = await response.json();
-        setUsers(data);
-        setUserCount(data.length);
-        // setStats([
-        //     { title: "Total Users", value: userCount, icon: <People /> },
-        //     { title: "Total Products", value: 150, icon: <Inventory /> },
-        //     { title: "Total Revenue", value: "1000", icon: <AttachMoney /> },
-        //     { title: "Total Orders", value: 10, icon: <ShoppingCart /> },
-        // ]);
+        // setUsers(data);
+        // setUserCount(data.length);
+        setStats([
+            { title: "Total Users", value: data.totalUsers, icon: <People /> },
+            { title: "Total Products", value: data.totalProducts, icon: <Inventory /> },
+            { title: "Total Revenue", value: data.totalRevenue, icon: <AttachMoney /> },
+            { title: "Total Orders", value: data.totalOrders, icon: <ShoppingCart /> },
+        ]);
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
+    if(localStorage.getItem("token") === null){
+      window.location.href = "/login";
+    }
     fetchUsers();
   }, []);
   return (
     <>
       <div
-        className="flex items-center justify-center h-96 bg-gray-100 "
+        // className="flex items-center justify-center h-96 bg-gray-100 "
         style={{ padding: "20px", marginTop: "5rem" }}
       >
         <Typography variant="h4" gutterBottom align="center">
           Welcome to the Dashboard
         </Typography>
         <div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+          // className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           style={{
             display: "grid",
             marginTop: "2rem",

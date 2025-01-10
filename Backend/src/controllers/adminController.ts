@@ -220,9 +220,10 @@ class AdminController {
         { $group: { _id: null, total: { $sum: "$totalAmount" } } },
       ]);
       const totalOrders = await Purchase.countDocuments();
-
+      const totalProducts = await Part.countDocuments();
       return res.status(200).json({
         totalUsers,
+        totalProducts,
         totalRevenue: totalRevenue[0]?.total || 0,
         totalOrders,
       });
@@ -232,6 +233,17 @@ class AdminController {
   };
 
   // Get products in stock
+  /**
+   * Retrieves the stock information for a specific product by its ID.
+   * 
+   * @param req - The request object containing the product ID in the parameters.
+   * @param res - The response object used to send the stock information or an error message.
+   * 
+   * @returns A JSON response with the stock information if the product is found,
+   *          or an error message if the product is not found or an internal server error occurs.
+   * 
+   * @throws 500 - Internal Server Error if an exception occurs during the process.
+   */
   private getProductsInStock = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;

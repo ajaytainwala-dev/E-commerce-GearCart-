@@ -96,9 +96,7 @@ class authController {
       });
       await newUser.save();
 
-      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET!, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET!);
 
       res.status(201).json({ token: token });
     } catch (error) {
@@ -145,9 +143,7 @@ class authController {
         return res.status(400).json({ error: "Invalid email or password" });
       }
 
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!);
 
       return res.status(200).json({ token: token });
     } catch (error) {

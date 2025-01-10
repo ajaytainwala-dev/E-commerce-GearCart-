@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -22,7 +22,7 @@ import {
   ChevronLeft as ChevronLeftIcon,
 } from "@mui/icons-material";
 import Link from "next/link";
-
+import "./globals.css"
 const drawerWidth = 240;
 
 const menuItems = [
@@ -43,55 +43,64 @@ export default function Layout({ children }: LayoutProps) {
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+  }, []);
 
   return (
     <html lang="en">
-      <body className="flex-grow p-6 mt-16 ml-60">
+      <body >
         <AppBar position="fixed" className="z-50">
           <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={toggleDrawer}
-              sx={{ marginRight: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
+            {token && (
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="start"
+                onClick={toggleDrawer}
+                sx={{ marginRight: 2 }}
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
             <Typography variant="h6" noWrap component="div">
               E-commerce Admin
             </Typography>
           </Toolbar>
         </AppBar>
-        <Drawer
-          variant="temporary"
-          open={drawerOpen}
-          onClose={toggleDrawer}
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
+        {token && (
+          <Drawer
+            variant="temporary"
+            open={drawerOpen}
+            onClose={toggleDrawer}
+            sx={{
               width: drawerWidth,
-              boxSizing: "border-box",
-            },
-          }}
-        >
-          <Toolbar>
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <List>
-            {menuItems.map((item) => (
-              <Link href={item.href} key={item.text} passHref>
-                <ListItem >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItem>
-              </Link>
-            ))}
-          </List>
-        </Drawer>
+              flexShrink: 0,
+              "& .MuiDrawer-paper": {
+                width: drawerWidth,
+                boxSizing: "border-box",
+              },
+            }}
+          >
+            <Toolbar>
+              <IconButton onClick={toggleDrawer}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </Toolbar>
+            <List>
+              {menuItems.map((item) => (
+                <Link href={item.href} key={item.text} passHref>
+                  <ListItem>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItem>
+                </Link>
+              ))}
+            </List>
+          </Drawer>
+        )}
         {children}
       </body>
     </html>

@@ -15,16 +15,24 @@ import {
 // import { useFetch } from "../hooks/useFetch";
 
 interface User {
-  id: number;
+  _id: number;
   name: string;
   email: string;
-  role: string;
+//   role: string;
 }
 
 export default function UserList() {
     const fetchUsers = async () => {
         try {
-            const response = await fetch("http://127.0.0.1:5000/admin/users");
+            const response = await fetch("http://127.0.0.1:5000/admin/users",
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+                    },
+                }
+            );
             const data: User[] = await response.json();
             return data;
         } catch (error) {
@@ -61,7 +69,8 @@ export default function UserList() {
     }
 
     return (
-        <div>
+        <div style={{ padding: "20px",marginTop:"5rem" }}>
+
             <Typography variant="h4" gutterBottom>
                 Users
             </Typography>
@@ -73,16 +82,16 @@ export default function UserList() {
                                 <TableCell>ID</TableCell>
                                 <TableCell>Name</TableCell>
                                 <TableCell>Email</TableCell>
-                                <TableCell>Role</TableCell>
+                                {/* <TableCell>Role</TableCell> */}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {users.map((user) => (
-                                <TableRow key={user.id}>
-                                    <TableCell>{user.id}</TableCell>
+                                <TableRow key={user._id}>
+                                    <TableCell>{user._id}</TableCell>
                                     <TableCell>{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
-                                    <TableCell>{user.role}</TableCell>
+                                    {/* <TableCell>{user.role}</TableCell> */}
                                 </TableRow>
                             ))}
                         </TableBody>
