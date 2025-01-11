@@ -82,8 +82,8 @@ const Page = () => {
               alt="ecommerce"
               className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
               src="/DummyPlaceholder.webp"
-              width={400}
-              height={400}
+              width={500}
+              height={500}
             />
             <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
               <Typography
@@ -116,10 +116,10 @@ const Page = () => {
                   .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                   .join(" ")}
               </Typography>
-              <Typography>
+              <Typography variant="h6">
                 Compatability :{" "}
                 {product.product.compatibility.map((item) => (
-                  <Typography key={item}>
+                  <Typography variant="body1" key={item} className="ml-4">
                     {item
                       .split(" ")
                       .map(
@@ -129,7 +129,7 @@ const Page = () => {
                   </Typography>
                 ))}
               </Typography>
-              <Typography>
+              <Typography className="text-lg mt-4 title-font text-gray-600  tracking-widest">
                 Category :{" "}
                 {product.product.category
                   .split(" ")
@@ -137,9 +137,9 @@ const Page = () => {
                   .join(" ")}
               </Typography>
 
-              <p className="leading-relaxed">
+              <Typography className="leading-relaxed">
                 Description : {product.product.description}
-              </p>
+              </Typography>
 
               <div className="flex flex-col flex-wrap mt-4">
                 <Typography

@@ -132,11 +132,11 @@ export default function ProductList() {
                   <TableCell>₹{product.price.toFixed(2)}</TableCell>
                   <TableCell>{product.stock}</TableCell>
                   <TableCell sx={{textAlign:"center"}}>
-                    <Link href={`/products/edit/${product.id}`} passHref>
+                    {/* <Link href={`/products/edit/${product.id}`} passHref>
                       <Button startIcon={<Edit />} size="small">
                         Edit
                       </Button>
-                    </Link>
+                    </Link> */}
                     <Button
                       startIcon={<Delete />}
                       size="small"

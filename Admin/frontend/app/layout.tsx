@@ -21,6 +21,7 @@ import {
   Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
 } from "@mui/icons-material";
+import Footer from "@/components/Footer/Footer"
 import Link from "next/link";
 import "./globals.css"
 const drawerWidth = 240;
@@ -102,6 +103,7 @@ export default function Layout({ children }: LayoutProps) {
           </Drawer>
         )}
         {children}
+        <Footer/>
       </body>
     </html>
   );

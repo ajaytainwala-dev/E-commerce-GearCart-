@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response, NextFunction, RequestHandler } from "express";
 import multer from "multer";
 import { Product as Part } from "../models/Product";
 import { User } from "../models/User";
@@ -6,29 +6,27 @@ import Purchase from "../models/Purchase";
 import AuthMiddleware from "../middlewares/adminMiddleware";
 import path from "path";
 
-// Multer configuration for file uploads
-// const storage = multer.diskStorage({
-//   destination: (_, __, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (_, file, cb) => {
-//     cb(null, Date.now() + "-" + file.originalname);
-//   },
-// });
-// const upload = multer({ storage });
-
-// const upload = multer({ dest: "uploads/" });
-// const typed = upload.single("image");
 const storage = multer.diskStorage({
   destination: "./uploads/",
-  filename: (req, file, cb) => {
+  filename: (_req, file, cb) => {
     cb(
       null,
       file.fieldname + "-" + Date.now() + path.extname(file.originalname)
     );
   },
 });
-const upload = multer({ storage: storage });
+const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+  const filetypes = /jpeg|jpg|png|gif/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+
+  if (extname && mimetype) {
+    return cb(null, true);
+  } else {
+    cb(new Error("Only images are allowed"));
+  }
+};
+const upload = multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
 class AdminController {
   public path: string = "/admin";
   public router = Router();
@@ -38,20 +36,20 @@ class AdminController {
   }
 
   private initializeRoutes() {
-    this.router.get(`/users`, AuthMiddleware, this.getUsers);
-    this.router.post(`/add-product`, AuthMiddleware, this.addProduct);
+    this.router.get(`/users`, AuthMiddleware as RequestHandler, this.getUsers);
+    this.router.post(`/add-product`, AuthMiddleware as RequestHandler, this.addProduct);
 
-    this.router.get(`/dashboard`, AuthMiddleware, this.getDashboardData);
-    this.router.get(`/stock/:id`, AuthMiddleware, this.getProductsInStock);
+    this.router.get(`/dashboard`, AuthMiddleware as RequestHandler, this.getDashboardData);
+    this.router.get(`/stock/:id`, AuthMiddleware as RequestHandler, this.getProductsInStock);
     this.router.post(
       `/offer/:productId/:discountPercentage`,
-      AuthMiddleware,
+      AuthMiddleware as RequestHandler,
       this.addOffer
     );
-    this.router.get(`/orders`, AuthMiddleware, this.viewOrders);
+    this.router.get(`/orders`, AuthMiddleware as RequestHandler, this.viewOrders);
     this.router.post(
-      "/add/:id",
-      AuthMiddleware,
+      "/add",
+      AuthMiddleware as RequestHandler,
       upload.array("images", 4),
       this.uploadImage
     );
@@ -69,7 +67,7 @@ class AdminController {
    * @throws Will return a 500 status code and an error message if an internal server error occurs.
    */
   private getUsers = async (
-    req: Request,
+    _req: Request,
     res: Response,
     next: NextFunction
   ) => {
@@ -103,6 +101,7 @@ class AdminController {
    */
   private uploadImage = async (req: Request, res: Response) => {
     try {
+      console.log(req.files);
       const imageUrl = Array.isArray(req.files)
         ? req.files.map((file: any) => file.path)
         : [];
@@ -110,13 +109,14 @@ class AdminController {
       if (!imageUrl) {
         return res.status(400).json({ error: "Image is required" });
       }
-      const { id } = req.params;
-      const product = await Part.findById(id);
-      if (!product) {
-        return res.status(404).json({ error: "Product not found" });
-      }
-      product.imageUrl = imageUrl;
-      await product.save();
+      // const { id } = req.params;
+      // const product = await Part.findById(id);
+      // if (!product) {
+      //   return res.status(404).json({ error: "Product not found" });
+      // }
+      // product.imageUrl = imageUrl;
+      // await product.save();
+
       return res.status(200).json({
         imageUrl: imageUrl,
       });
@@ -235,19 +235,19 @@ class AdminController {
   // Get products in stock
   /**
    * Retrieves the stock information for a specific product by its ID.
-   * 
+   *
    * @param req - The request object containing the product ID in the parameters.
    * @param res - The response object used to send the stock information or an error message.
-   * 
+   *
    * @returns A JSON response with the stock information if the product is found,
    *          or an error message if the product is not found or an internal server error occurs.
-   * 
+   *
    * @throws 500 - Internal Server Error if an exception occurs during the process.
    */
   private getProductsInStock = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const products = await Part.findById( id );
+      const products = await Part.findById(id);
       if (!products) {
         return res.status(404).json({ error: "Product not found" });
       }
