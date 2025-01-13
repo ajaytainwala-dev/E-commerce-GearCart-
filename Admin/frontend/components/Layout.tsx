@@ -40,12 +40,10 @@ export default function Layout({ children }: LayoutProps) {
         <Toolbar />
         <List>
           {menuItems.map((item) => (
-            <Link href={item.href} key={item.text} passHref>
-              <ListItem button component="a">
-                <ListItemIcon>{item.icon}</ListItemIcon>
-                <ListItemText primary={item.text} />
-              </ListItem>
-            </Link>
+            <ListItem  component={Link} href={item.href} key={item.text}>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItem>
           ))}
         </List>
       </Drawer>

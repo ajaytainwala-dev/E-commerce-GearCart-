@@ -48,7 +48,7 @@ class AdminController {
     );
     this.router.get(`/orders`, AuthMiddleware as RequestHandler, this.viewOrders);
     this.router.post(
-      "/add",
+      "/add/:id",
       AuthMiddleware as RequestHandler,
       upload.array("images", 4),
       this.uploadImage
@@ -109,13 +109,13 @@ class AdminController {
       if (!imageUrl) {
         return res.status(400).json({ error: "Image is required" });
       }
-      // const { id } = req.params;
-      // const product = await Part.findById(id);
-      // if (!product) {
-      //   return res.status(404).json({ error: "Product not found" });
-      // }
-      // product.imageUrl = imageUrl;
-      // await product.save();
+      const { id } = req.params;
+      const product = await Part.findById(id);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+      product.imageUrl = imageUrl;
+      await product.save();
 
       return res.status(200).json({
         imageUrl: imageUrl,
@@ -196,7 +196,7 @@ class AdminController {
         // imageUrl,
       });
       await newProduct.save();
-      return res.status(201).json(newProduct);
+      return res.status(201).json({id : newProduct._id});
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Internal Server Error" });

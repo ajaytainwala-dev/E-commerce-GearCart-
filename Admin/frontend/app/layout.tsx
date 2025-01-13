@@ -24,6 +24,7 @@ import {
 import Footer from "@/components/Footer/Footer"
 import Link from "next/link";
 import "./globals.css"
+import NextTopLoader from "nextjs-toploader";
 const drawerWidth = 240;
 
 const menuItems = [
@@ -52,7 +53,8 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <html lang="en">
-      <body >
+      <body>
+        <NextTopLoader height={5} showSpinner={false} />
         <AppBar position="fixed" className="z-50">
           <Toolbar>
             {token && (
@@ -66,9 +68,11 @@ export default function Layout({ children }: LayoutProps) {
                 <MenuIcon />
               </IconButton>
             )}
+            <Link href="/" passHref>
             <Typography variant="h6" noWrap component="div">
               E-commerce Admin
             </Typography>
+            </Link>
           </Toolbar>
         </AppBar>
         {token && (
@@ -103,7 +107,7 @@ export default function Layout({ children }: LayoutProps) {
           </Drawer>
         )}
         {children}
-        <Footer/>
+        <Footer />
       </body>
     </html>
   );

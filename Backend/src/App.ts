@@ -34,7 +34,7 @@ class App {
 
   private initializeMiddleware() {
     this.app.use(express.json());
-    this.app.use("/images", express.static("upload/images"));
+    this.app.use("/uploads", express.static("uploads"));
     this.app.use(cors());
     this.app.use(bodypaser.json());
     this.app.use(bodypaser.urlencoded({ extended: true }));

@@ -12,6 +12,7 @@ interface Product {
   name: string;
   price: number;
   category: string;
+  imageUrl: string;
   discount: number;
   compatibility: string[];
   description: string;
@@ -42,6 +43,7 @@ const Page = () => {
       discount: 0,
       supplierName: "",
       compatibility: [],
+      imageUrl: "",
       description: "",
       image: "",
       brand: "",
@@ -52,7 +54,7 @@ const Page = () => {
   const fetchCategoryProducts = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/product/product/${id}`,
+        `http://127.0.0.1:5000/product/product/${id}`,
         {
           method: "GET",
           headers: {
@@ -80,10 +82,15 @@ const Page = () => {
           <div className="lg:w-4/5 mx-auto flex flex-wrap items-center ">
             <Image
               alt="ecommerce"
-              className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded"
-              src="/DummyPlaceholder.webp"
-              width={500}
-              height={500}
+              className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded border-2  shadow-xl"
+              src={
+                product.product.imageUrl
+                  ? `http://localhost:5000/${product.product.imageUrl[0]}`
+                  : "/DummyPlaceholder.webp"
+              }
+              width={600}
+              height={600}
+             
             />
             <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
               <Typography

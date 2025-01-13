@@ -6,7 +6,12 @@ import { useForm } from 'react-hook-form';
 const LoginPage: React.FC = () => {
     const { register, handleSubmit, formState: { errors } } = useForm<{ email: string; password: string }>();
     const router = useRouter();
-
+React.useEffect(()=>{
+    const token = localStorage.getItem("token");
+    if(token){
+        router.push('/Dashboard')
+    }
+})
     const onSubmit = async (data: { email: string; password: string }) => {
         // Add your login logic here
         console.log(data);

@@ -14,7 +14,7 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import { Add,  Delete } from "@mui/icons-material";
 import Link from "next/link";
 import { useFetch } from "../hooks/useFetch";
 

@@ -57,7 +57,7 @@ function ResponsiveAppBar() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: {  },
   }=useForm<Search>();
   const { isLogin } = useContext(AppContext);
 
@@ -220,7 +220,7 @@ function ResponsiveAppBar() {
                     id="default-search"
                     {...register("search", { required: true })}
                     className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Search Mockups, Logos..."
+                    placeholder="Search Products..."
                     required
                   />
                   <button
@@ -297,7 +297,7 @@ function ResponsiveAppBar() {
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="AT" src="/static/images/avatar/2.jpg" />
+                    <Avatar alt="AT" src="/Placeholder/UserProfile.webp" />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -328,7 +328,7 @@ function ResponsiveAppBar() {
                               {
                                 if (setting.name === "Logout") {
                                   localStorage.removeItem("token");
-                                  window.location.reload();
+                                  // window.location.reload();
                                 }
                               }
                             }}
