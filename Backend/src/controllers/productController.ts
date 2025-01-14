@@ -63,7 +63,8 @@ class ProductController {
     this.router.post("/addproduct", this.createProduct);
     this.router.get("/brand/:brand", this.getProductsByBrand);
     this.router.get("/category",AuthMiddleware,this.getCategories);
-    this.router.get("/category/:category", this.getProductsByCategory);
+    
+    this.router.get("/category/:category",AuthMiddleware, this.getProductsByCategory);
     this.router.get("/search", this.searchProduct);
     this.router.get("/partnumber/:partNumber", this.getProductsByPartNumber);
     this.router.put("/update/:id", this.updateProduct);

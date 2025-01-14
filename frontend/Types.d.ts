@@ -19,3 +19,13 @@ export interface Data {
   succcess: boolean;
   product: Product;
 }
+
+
+export interface Brand  {
+  _id: string;
+  brand_id: number;
+  name: string;
+  description: string;
+  country_of_origin: string;
+  logo_url: string;
+}

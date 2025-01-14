@@ -4,6 +4,7 @@ import productController from "./controllers/productController";
 import TestController from "./controllers/testController";
 import PurchaseController from "./controllers/puchaseController";
 import AdminController from "./controllers/adminController";
+import BrandController from "./controllers/brandController";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -14,6 +15,7 @@ const app = new App(
     new productController(),
     new PurchaseController(),
     new AdminController(),
+    new BrandController(),
   ],
   Number(process.env.PORT) || 3000
 );

@@ -5,7 +5,7 @@ interface IPart extends Document {
   OEMPartNumber: string;
   partNumber: string;
   name: string;
-  brand: string;
+  brand: Schema.Types.ObjectId;
   category: string;
   price: number;
   discount: number;
@@ -40,7 +40,8 @@ const partSchema = new Schema<IPart>(
       required: true,
     },
     brand: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Brand",
       required: true,
     },
     category: {

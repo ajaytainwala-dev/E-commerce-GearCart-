@@ -74,6 +74,7 @@ export default function Page() {
                 <TextField
                   {...field}
                   fullWidth
+                  required
                   label="Product Name"
                   error={!!errors.name}
                   helperText={errors.name ? errors.name.message : ""}
@@ -89,6 +90,7 @@ export default function Page() {
                   {...field}
                   fullWidth
                   label="Price"
+                  required
                   type="number"
                   error={!!errors.price}
                   helperText={errors.price ? errors.price.message : ""}
@@ -105,6 +107,7 @@ export default function Page() {
                   fullWidth
                   label="Stock"
                   type="number"
+                  required
                   error={!!errors.stock}
                   helperText={errors.stock ? errors.stock.message : ""}
                 />
@@ -114,28 +117,28 @@ export default function Page() {
               name="OEMPartNumber"
               control={control}
               render={({ field }) => (
-                <TextField {...field} fullWidth label="OEM Part Number" />
+                <TextField {...field} required fullWidth label="OEM Part Number" />
               )}
             />
             <Controller
               name="partNumber"
               control={control}
               render={({ field }) => (
-                <TextField {...field} fullWidth label="Part Number" />
-              )}
+                <TextField {...field} required fullWidth label="Part Number" />
+              )} 
             />
             <Controller
               name="brand"
               control={control}
               render={({ field }) => (
-                <TextField {...field} fullWidth label="Brand" />
+                <TextField {...field} required fullWidth label="Brand" />
               )}
             />
             <Controller
               name="category"
               control={control}
               render={({ field }) => (
-                <TextField {...field} fullWidth label="Category" />
+                <TextField {...field} required fullWidth label="Category" />
               )}
             />
             <Controller
@@ -147,6 +150,7 @@ export default function Page() {
                   fullWidth
                   label="Discount"
                   type="number"
+                  required
                 />
               )}
             />
@@ -155,21 +159,22 @@ export default function Page() {
               name="vehicleType"
               control={control}
               render={({ field }) => (
-                <TextField {...field} fullWidth label="Vehicle Type" />
+                <TextField {...field} required fullWidth label="Vehicle Type" />
               )}
             />
             <Controller
               name="compatibility"
               control={control}
               render={({ field }) => (
-                <TextField {...field} fullWidth label="Compatibility" />
+                <TextField {...field} required fullWidth label="Compatibility" />
               )}
            />
             <Controller
               name="supplierName"
               control={control}
+              
               render={({ field }) => (
-                <TextField {...field} fullWidth label="Supplier Name" />
+                <TextField {...field} required fullWidth label="Supplier Name" />
               )}
             />
             <Controller
@@ -178,6 +183,7 @@ export default function Page() {
               render={({ field }) => (
                 <TextField
                   {...field}
+                  required
                   fullWidth
                   label="Description"
                   multiline
