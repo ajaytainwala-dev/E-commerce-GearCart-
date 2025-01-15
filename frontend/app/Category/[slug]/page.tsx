@@ -54,6 +54,7 @@ const Page = () => {
   };
   React.useEffect(() => {
     fetchCategoryProducts();
+    // eslint-disable-next-line
   }, []);
   return (
     <>
@@ -93,7 +94,7 @@ const Page = () => {
 
               {/* Product Title */}
               <h1 className="text-lg text-gray-500 text-center font-semibold  mb-2">
-                {product.brand.toUpperCase()}
+                {(product.brand)}
               </h1>
               <h2 className="text-lg text-black font-semibold  mb-2">
                 {product.name}

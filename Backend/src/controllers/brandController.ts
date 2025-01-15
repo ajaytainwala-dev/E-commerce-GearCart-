@@ -60,6 +60,7 @@ class BrandController {
       AdminMiddleware,
       this.updateBrand
     );
+
     this.router.delete(`/:id`, AdminMiddleware, this.deleteBrand);
   }
 
@@ -94,6 +95,7 @@ class BrandController {
   };
 
 
+  
 //   Create Brand
 /**
  * Creates a new brand and saves it to the database.
