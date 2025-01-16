@@ -1,6 +1,6 @@
 export interface Brand {
   _id: number;
-  brand_id: number;
+  brand_id: string;
   name: string;
   description: string;
   country_of_origin: string;

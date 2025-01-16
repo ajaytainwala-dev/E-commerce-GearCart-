@@ -5,6 +5,7 @@ import { User } from "../models/User";
 import Purchase from "../models/Purchase";
 import AuthMiddleware from "../middlewares/adminMiddleware";
 import path from "path";
+import Brand  from "../models/Brand";
 
 const storage = multer.diskStorage({
   destination: "./uploads/",
@@ -221,11 +222,13 @@ class AdminController {
       ]);
       const totalOrders = await Purchase.countDocuments();
       const totalProducts = await Part.countDocuments();
+      const totalBrands = await Brand.countDocuments();
       return res.status(200).json({
         totalUsers,
         totalProducts,
         totalRevenue: totalRevenue[0]?.total || 0,
         totalOrders,
+        totalBrands
       });
     } catch (error) {
       return res.status(500).json({ error: "Internal Server Error" });

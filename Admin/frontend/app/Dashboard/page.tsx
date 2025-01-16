@@ -8,6 +8,7 @@ import {
   AttachMoney,
   ShoppingCart,
 } from "@mui/icons-material";
+import { Building2 } from "lucide-react";
 
 
 export default function Dashboard() {
@@ -18,6 +19,7 @@ export default function Dashboard() {
         { title: "Total Products", value: 0, icon: <Inventory /> },
         { title: "Total Revenue", value: "0", icon: <AttachMoney /> },
         { title: "Total Orders", value: 0, icon: <ShoppingCart /> },
+        { title: "Total Brands", value: 0, icon: <Building2 /> },
     ]);
   const fetchUsers = async () => {
     try {
@@ -37,6 +39,7 @@ export default function Dashboard() {
             { title: "Total Products", value: data.totalProducts, icon: <Inventory /> },
             { title: "Total Revenue", value: data.totalRevenue, icon: <AttachMoney /> },
             { title: "Total Orders", value: data.totalOrders, icon: <ShoppingCart /> },
+            { title: "Total Brands", value: data.totalBrands, icon: <Building2/> },
         ]);
     } catch (error) {
       console.log(error);
@@ -44,7 +47,7 @@ export default function Dashboard() {
   };
   useEffect(() => {
     if(localStorage.getItem("token") === null){
-      window.location.href = "/login";
+      window.location.href = "/Login";
     }
     fetchUsers();
   }, []);

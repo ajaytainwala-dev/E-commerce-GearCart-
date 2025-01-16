@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import dotenv from "dotenv";
 import AdminMiddleware from "../middlewares/adminMiddleware";
-import AuthMiddleware from "../middlewares/middleware";
+// import AuthMiddleware from "../middlewares/middleware";
 import Brand from "../models/Brand";
 import multer from "multer";
 import path from "path";

@@ -62,7 +62,7 @@ const Brand = () => {
                   className="rounded-lg m-2 "
                 />
                 <span className="text-sm font-medium text-gray-900 dark:text-white">
-                  {brand.description}
+                  {brand.name}
                 </span>
               </Link>
             ))}

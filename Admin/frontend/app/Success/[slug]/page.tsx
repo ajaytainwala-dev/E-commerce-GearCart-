@@ -3,13 +3,15 @@ import React from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Box, Typography } from "@mui/material";
 // import { Upload } from 'lucide-react';
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const RegistrationSuccess = () => {
+  const { slug} = useParams();
   const router = useRouter();
   React.useEffect(() => {
     setTimeout(() => {
-      router.push("/products");
+      if(slug === "Product") router.push("/products");
+      if(slug === "Brand") router.push("/Brands");
     }, 1500);
     //eslint-disable-next-line
   }, []);
@@ -25,7 +27,7 @@ const RegistrationSuccess = () => {
       >
         <CheckCircleIcon style={{ fontSize: 100, color: "green" }} />
         <Typography variant="h4" style={{ marginTop: 20 }}>
-          Product Uploaded Successfully
+          {slug} Uploaded Successfully
         </Typography>
       </Box>
     </>

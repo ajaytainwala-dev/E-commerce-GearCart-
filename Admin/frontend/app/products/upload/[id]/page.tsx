@@ -42,7 +42,7 @@ const [submited, setSubmited] = useState<boolean>(false);
       setImageURL(data.imageUrl);
       setSubmited(true);
       setTimeout(()=>{
-        router.push("/Success")
+        router.push("/Success/Product")
       })
       console.log(imageURL);
     } catch (err) {
