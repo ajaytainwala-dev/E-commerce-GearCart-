@@ -8,71 +8,26 @@ import {
   Typography,
   Link,
   Button,
+  CardMedia,
 } from "@mui/material";
-
+import { ICategory, CategoryData } from "../../Types";
 const Category = () => {
-  const [category, setCategory] = useState<string[]>([]);
-//   const categori = [
-//     {
-//       title: "AIR FILTERS (PAPER)",
-//       image: "/Category/AirFilter.webp", // Replace with actual image path
-//       link: "/Category/air-filters",
-//     },
-//     {
-//       title: "BOLTS & NUTS",
-//       image: "/Category/BoltNut.webp", // Replace with actual image path
-//       link: "/Category/bolts-nuts",
-//     },
-//     {
-//       title: "CENTRE STANDS",
-//       image: "/Category/CenterStand.webp", // Replace with actual image path
-//       link: "/Category/centre-stands",
-//     },
-//     {
-//       title: "CRASH GUARDS",
-//       image: "/Category/CrashGuard.webp", // Replace with actual image path
-//       link: "/Category/centre-stands",
-//     },
-//     {
-//       title: "Fork Main Tubes",
-//       image: "/Category/ForkMainTube.webp", // Replace with actual image path
-//       link: "/Category/centre-stands",
-//     },
-//     {
-//       title: "Footrest Rods",
-//       image: "/Category/FootRestRod.webp", // Replace with actual image path
-//       link: "/Category/centre-stands",
-//     },
-//     {
-//       title: "Fork & Fork ASSY",
-//       image: "/Category/ForkAssy.webp", // Replace with actual image path
-//       link: "/Category/centre-stands",
-//     },
-//     {
-//       title: "Wheel Rims",
-//       image: "/Category/WheelRim.webp", // Replace with actual image path
-//       link: "/Category/centre-stands",
-//     },
-//     {
-//       title: "Clutch Pulleys",
-//       image: "/Category/ClutchPulley.webp", // Replace with actual image path
-//       link: "/Category/centre-stands",
-//     },
-//   ];
+  const [category, setCategory] = useState<ICategory[]>([]);
+
   const fetchCategory = async () => {
     try {
-      const response = await fetch("http://localhost:5000/product/category", {
+      const response = await fetch("http://localhost:5000/category/", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
-      const data = await response.json();
-      setCategory(data.categories);
-      console.log(data);
+      const data: CategoryData = await response.json();
+      setCategory(data.Category);
     } catch (error) {
       console.log(error);
+      throw new Error("Failed to fetch category");
     }
   };
   useEffect(() => {
@@ -93,36 +48,59 @@ const Category = () => {
               className="m-2 p-1 mx-auto"
               justifyContent="center"
             >
-              {category.map((category, index) => (
-                <Grid item xs={12} sm={6} md={4} key={index} className="rounded-[2rem]">
-                  <Card sx={{ boxShadow: 2, p: 1 }}>
-                    <CardContent>
-                      <Typography
-                        variant="h6"
-                        sx={{ fontWeight: "bold" }}
-                        className="text-center"
-                      >
-                        {category
-                          .split(" ")
-                          .map(
-                            (word: string) =>
-                              word.charAt(0).toUpperCase() + word.slice(1)
-                          )
-                          .join(" ")}
-                      </Typography>
-                      <Link
-                        href={`Category/${category}`}
-                        style={{ color: "blue" }}
-                        className="flex items-center justify-center my-5"
-                      >
-                        <Button variant="contained" color="primary">
-                          More &gt;
-                        </Button>
-                      </Link>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
+              {category &&
+                category.map((category, index) => (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={4}
+                    key={index}
+                    className="rounded-[2rem]"
+                    sx={{borderRadius: "2rem"}}
+                  >
+                    <Card sx={{ boxShadow: 2, p: 1 }}>
+                      <CardContent>
+                        <CardMedia
+                          component="img"
+                          // height="100"
+                          image={
+                            category.category_image
+                              ? `http://localhost:5000/${category.category_image}`
+                              : "/DummyPlaceholder.webp"
+                          }
+                          alt={category.name}
+                          sx={{
+                            height: 100,
+                            width: 100,
+                            objectFit: "cover",
+                            margin: "auto",
+                            borderRadius: "1rem",
+                            border: "1px solid #ccc",
+                            boxShadow: "2px 2px 2px #ccc",
+                            marginBottom: "1rem",
+                          }}
+                        />
+                        <Typography
+                          variant="h6"
+                          sx={{ fontWeight: "bold" }}
+                          className="text-center"
+                        >
+                          {category.name}
+                        </Typography>
+                        <Link
+                          href={`Category/${category.name}`}
+                          style={{ color: "blue" }}
+                          className="flex items-center justify-center my-5"
+                        >
+                          <Button variant="contained" color="primary">
+                            More &gt;
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
             </Grid>
           </div>
         </div>

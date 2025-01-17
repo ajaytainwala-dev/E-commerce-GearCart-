@@ -12,6 +12,7 @@ const RegistrationSuccess = () => {
     setTimeout(() => {
       if(slug === "Product") router.push("/products");
       if(slug === "Brand") router.push("/Brands");
+      if(slug === "Category") router.push("/Category");
     }, 1500);
     //eslint-disable-next-line
   }, []);

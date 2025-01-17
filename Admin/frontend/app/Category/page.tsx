@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect ,useState} from "react";
 import {
   Typography,
   Button,
@@ -14,13 +14,12 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
-import { Add,  Delete } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import Link from "next/link";
 import { useFetch } from "../hooks/useFetch";
 import { useRouter } from "next/navigation";
-import { BrandData } from "@/Types";
+import { CategoryData, Category } from '@/Types';
 import Image from "next/image";
-
 
 interface DeleteData {
   success: boolean;
@@ -29,43 +28,62 @@ interface DeleteData {
 
 export default function ProductList() {
   const router = useRouter();
+  const[parentCategory, setParentCategory] = useState<Category | null>(null);
   const {
-    data: brands,
+    data: categories,
     loading,
     error,
-  } = useFetch<BrandData>("http://localhost:5000/brand/", "GET");
+  } = useFetch<CategoryData>("http://localhost:5000/category/", "GET");
+  
+  const fetchParentCategory = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:5000/category/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const categoryData: CategoryData = await response.json();
+      if (!categoryData?.success) {
+        <Alert severity="error">Failed to Fetch Parent Category</Alert>;
+        throw new Error(`HTTP error! status: ${categoryData.success}`);
+      }
+      setParentCategory(categoryData.Category[0]);
+    } catch (error) {
+      alert(`Failed to fetch Parent Category. Please try again.${error}`);
+    }
+  }
 
   useEffect(() => {
     if (localStorage.getItem("token") === null) {
       router.push("/login");
     }
+    
     // eslint-disable-next-line
   }, []);
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/brand/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await fetch(`http://localhost:5000/category/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       const delelteData: DeleteData = await response.json();
       if (!delelteData?.success) {
-        <Alert severity="error">Failed to Delete Product</Alert>;
+        <Alert severity="error">Failed to Delete Category</Alert>;
         throw new Error(`HTTP error! status: ${delelteData?.message}`);
       }
-      <Alert severity="success">Product Deleted Successfully</Alert>;
+      <Alert severity="success">Category Deleted Successfully</Alert>;
       setTimeout(() => {
-        window.location.reload();
+        router.refresh();
       }, 1000);
       // Refresh the product list after successful deletion
     } catch (error) {
-      alert(`Failed to delete product. Please try again.${error}`);
+      alert(`Failed to delete Category. Please try again.${error}`);
     }
   };
 
@@ -94,37 +112,37 @@ export default function ProductList() {
         }}
       >
         <Typography variant="h4" gutterBottom>
-          All Brands
+          All Categories
         </Typography>
-        <Link href="/Brands/Add" passHref>
+        <Link href="/Category/Add" passHref>
           <Button variant="contained" color="primary" startIcon={<Add />}>
-            Add Brand
+            Add Categories
           </Button>
         </Link>
       </div>
-      {brands?.brands && brands?.brands.length > 0 ? (
+      {categories?.Category && categories?.Category.length > 0 ? (
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
-                <TableCell>Brand Logo</TableCell>
-                <TableCell>Brand Name</TableCell>
+                <TableCell>Category Image</TableCell>
+                <TableCell>Category Name</TableCell>
                 <TableCell>Description</TableCell>
-                <TableCell>Country of Origin</TableCell>
+                <TableCell>Parent Category</TableCell>
                 <TableCell sx={{ textAlign: "center" }}>Actions</TableCell>
                 {/* <TableCell>Edit Brand details</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
-              {brands?.brands.map((product) => (
+              {categories?.Category.map((product) => (
                 <TableRow key={product._id}>
-                  <TableCell>{product.brand_id}</TableCell>
+                  <TableCell>{product.category_id}</TableCell>
                   <TableCell>
                     <Image
                       src={
-                        product.logo_url
-                          ? `http://localhost:5000/${product.logo_url}`
+                        product.category_image
+                          ? `http://localhost:5000/${product.category_image}`
                           : "/DummyPlaceholder.webp"
                       }
                       alt={product.name}
@@ -136,15 +154,17 @@ export default function ProductList() {
                   </TableCell>
                   <TableCell>{product.name}</TableCell>
                   <TableCell>{product.description}</TableCell>
-                  <TableCell>{product.country_of_origin}</TableCell>
+                  <TableCell>{product.parent_Category}</TableCell>
                   <TableCell sx={{ textAlign: "center" }}>
-                    {/* <Link href={`/products/edit/${product.id}`} passHref>
-                      <Button startIcon={<Edit />} size="small">
+                 
+                    <Link
+                      href={`/Category/Edit/${product._id}`}
+                      passHref
+                      className="mr-2"
+                    >
+                      <Button size="small" variant="contained">
                         Edit
                       </Button>
-                    </Link> */}
-                    <Link href={`/Brands/Edit/${product._id}`} passHref className="mr-2">
-                      <Button size="small" variant="contained">Edit</Button>
                     </Link>
                     <Button
                       startIcon={<Delete />}
@@ -156,7 +176,6 @@ export default function ProductList() {
                       Delete
                     </Button>
                   </TableCell>
-                  
                 </TableRow>
               ))}
             </TableBody>

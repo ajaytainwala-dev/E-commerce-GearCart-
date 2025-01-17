@@ -29,3 +29,17 @@ export interface Brand  {
   country_of_origin: string;
   logo_url: string;
 }
+
+export interface ICategory {
+  _id: number;
+  category_id: number;
+  category_image: string;
+  name: string;
+  description: string;
+  parent_Category: string;
+}
+
+export interface CategoryData {
+  success: boolean;
+  Category: Category[];
+}

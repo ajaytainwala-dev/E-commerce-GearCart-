@@ -6,11 +6,6 @@ import Link from "next/link";
 import Category from "@/components/Category/Category";
 import {
   // Box,
-  Typography,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
   Button,
 } from "@mui/material";
 import CTA from "@/components/CTA";
@@ -18,53 +13,6 @@ import Image from "next/image";
 import Brand from "@/components/Brand/Brand";
 
 export default function Home() {
-  const categori = [
-    {
-      title: "AIR FILTERS (PAPER)",
-      image: "/Category/AirFilter.webp", // Replace with actual image path
-      link: "/Category/air-filters",
-    },
-    {
-      title: "BOLTS & NUTS",
-      image: "/Category/BoltNut.webp", // Replace with actual image path
-      link: "/Category/bolts-nuts",
-    },
-    {
-      title: "CENTRE STANDS",
-      image: "/Category/CenterStand.webp", // Replace with actual image path
-      link: "/Category/centre-stands",
-    },
-    {
-      title: "CRASH GUARDS",
-      image: "/Category/CrashGuard.webp", // Replace with actual image path
-      link: "/Category/centre-stands",
-    },
-    {
-      title: "Fork Main Tubes",
-      image: "/Category/ForkMainTube.webp", // Replace with actual image path
-      link: "/Category/centre-stands",
-    },
-    {
-      title: "Footrest Rods",
-      image: "/Category/FootRestRod.webp", // Replace with actual image path
-      link: "/Category/centre-stands",
-    },
-    {
-      title: "Fork & Fork ASSY",
-      image: "/Category/ForkAssy.webp", // Replace with actual image path
-      link: "/Category/centre-stands",
-    },
-    {
-      title: "Wheel Rims",
-      image: "/Category/WheelRim.webp", // Replace with actual image path
-      link: "/Category/centre-stands",
-    },
-    {
-      title: "Clutch Pulleys",
-      image: "/Category/ClutchPulley.webp", // Replace with actual image path
-      link: "/Category/centre-stands",
-    },
-  ];
 
   const images = [
     "/Placeholder/ThirdHero.webp",
@@ -82,7 +30,7 @@ export default function Home() {
 
       <>
         <Category />
-        <section className="text-gray-600 body-font">
+        {/* <section className="text-gray-600 body-font">
           <div className="container px-5 py-4 mx-auto">
             <h1 className="text-gray-900 text-3xl font-bold m-2  mb-3">
               SHOP BY CATEGORIES
@@ -122,7 +70,7 @@ export default function Home() {
               </Grid>
             </div>
           </div>
-        </section>
+        </section> */}
         {/* Categories */}
         <>
           <Brand />

@@ -59,9 +59,16 @@ const Page = () => {
   return (
     <>
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-semibold text-center mb-4">
-          All Products
-        </h1>
+        {products.length > 0 && (
+          <h1 className="text-3xl font-semibold text-center mb-4">
+            All Products
+          </h1>
+        )}
+        {products.length === 0 && (
+          <h2 className="text-2xl font-semibold text-center text-red-500 h-[50vh] flex items-center justify-center">
+            No products found in this category.
+          </h2>
+        )}
         <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-auto">
           {products.map((product) => (
             <div
@@ -94,7 +101,7 @@ const Page = () => {
 
               {/* Product Title */}
               <h1 className="text-lg text-gray-500 text-center font-semibold  mb-2">
-                {(product.brand)}
+                {product.brand}
               </h1>
               <h2 className="text-lg text-black font-semibold  mb-2">
                 {product.name}

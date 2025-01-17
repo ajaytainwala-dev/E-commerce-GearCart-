@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useRouter, useParams } from "next/navigation";
-import { Brand } from "@/Types";
+import { Category,CategoryData } from "@/Types";
 import { Upload } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import Image from "next/image";
@@ -21,7 +21,7 @@ export default function Page() {
   const { pending } = useFormStatus();
   const [file, setFile] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [brands, setBrands] = useState<Brand>();
+  const [category, setcategory] = useState<Category>();
   const fetchBrand = async () => {
     try {
       const response = await fetch(`http://localhost:5000/brand/${action[1]}`, {
@@ -31,7 +31,7 @@ export default function Page() {
         },
       });
       const data = await response.json();
-      setBrands(data.brand);
+      setcategory(data.brand);
     } catch (error) {
       setError(`${error}`);
     }
@@ -45,13 +45,13 @@ export default function Page() {
 
   const setValues = () => {
     if (action[0] === "Edit") {
-      return { ...brands };
+      return { ...category };
     } else {
       return {
-        brand_id: "",
+        category_id: "",
         name: "",
         description: "",
-        country_of_origin: "",
+        parent_Category: "",
       };
     }
   };
@@ -60,21 +60,21 @@ export default function Page() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<Brand>({
+  } = useForm<Category>({
     defaultValues: setValues(),
   });
 
-  const onSubmit = async (data: Brand) => {
+  const onSubmit = async (data: Category) => {
     try {
       setError(null);
       const formData = new FormData();
-      formData.append("logo", file[0]);
-      formData.append("brand_id", data.brand_id);
+      formData.append("image", file[0]);
+      formData.append("category_id", String(data.category_id));
       formData.append("name", data.name);
-      formData.append("country_of_origin", data.country_of_origin);
+      // formData.append("parent_Category", data.parent_Category);
       formData.append("description", data.description);
 
-      const response = await fetch("http://localhost:5000/brand/", {
+      const response = await fetch("http://localhost:5000/category/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -86,7 +86,7 @@ export default function Page() {
 
       // setSubmitted(true);
       setTimeout(() => {
-        router.push("/Success/Brand");
+        router.push("/Success/Category");
       }, 1000);
     } catch (err) {
       if (err instanceof Error) {
@@ -96,14 +96,14 @@ export default function Page() {
       }
     }
   };
-  const UpdateSubmit = async (data: Brand) => {
+  const UpdateSubmit = async (data: Category) => {
     try {
       setError(null);
       const formData = new FormData();
       formData.append("logo", file[0]);
-      formData.append("brand_id", data.brand_id);
+      formData.append("category_id", String(data.category_id));
       formData.append("name", data.name);
-      formData.append("country_of_origin", data.country_of_origin);
+      // formData.append("parent_Category", data.parent_Category);
       formData.append("description", data.description);
 
       const response = await fetch(`http://localhost:5000/brand/${action[1]}`, {
@@ -118,7 +118,7 @@ export default function Page() {
 
       // setSubmitted(true);
       setTimeout(() => {
-        router.push("/Success/Brand");
+        router.push("/Success/Category");
       }, 1000);
     } catch (err) {
       if (err instanceof Error) {
@@ -135,14 +135,14 @@ export default function Page() {
         {action[0] === "Add" && (
           <>
             <Typography variant="h4" gutterBottom>
-              Add New Brand
+              Add New Category
             </Typography>
             <form
               onSubmit={handleSubmit(onSubmit)}
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
               <Controller
-                name="brand_id"
+                name="category_id"
                 control={control}
                 rules={{ required: "Brand ID is required" }}
                 render={({ field }) => (
@@ -151,10 +151,10 @@ export default function Page() {
                     fullWidth
                     required
                     type="number"
-                    label="Brand ID"
+                    label="Category ID"
                     value={field.value}
-                    error={!!errors.brand_id}
-                    helperText={errors.brand_id ? errors.brand_id.message : ""}
+                    error={!!errors.category_id}
+                    helperText={errors.category_id ? errors.category_id.message : ""}
                   />
                 )}
               />
@@ -166,7 +166,7 @@ export default function Page() {
                   <TextField
                     {...field}
                     fullWidth
-                    label="Brand Name"
+                    label="Category Name"
                     required
                     value={field.value}
                     type="string"
@@ -175,19 +175,19 @@ export default function Page() {
                   />
                 )}
               />
-              <Controller
-                name="country_of_origin"
+              {/* <Controller
+                name="parent_Category"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    required
                     value={field.value}
                     fullWidth
-                    label="Country Of Origin"
+                    type="Object"
+                    label="Parent Category"
                   />
                 )}
-              />
+              /> */}
               <Controller
                 name="description"
                 control={control}
@@ -210,22 +210,20 @@ export default function Page() {
 
               <div>
                 <Typography variant="h6" gutterBottom className="text-center">
-                  Add Brand Logo
+                  Add Category Image
                 </Typography>
                 <div className="mb-4">
-                  {/* <Controller
-                name="logo_url"
-                control={control}
-                render={({ field }) => ( */}
+                 
                   <label
-                    htmlFor="logo_url"
+                    // htmlFor="category_image"
                     className="text-center text-xl cursor-pointer flex flex-col items-center justify-center gap-3 bg-slate-200 hover:bg-slate-300 p-6 rounded-md"
                   >
                     <Upload className="text-gray-500" />
-                    <span className="text-gray-700">Brand Images</span>
+                    <span className="text-gray-700">Category Images</span>
                     <input
+                    name="category_image"
                       type="file"
-                      id="logo_url"
+                      id="category_image"
                       accept="image/*"
                       // {...field}
                       onChange={(e) => {
@@ -235,12 +233,11 @@ export default function Page() {
                           alert("You can only upload 1 file.");
                         }
                       }}
-                      className="hidden"
+                      // className="hidden"
                       required
                     />
                   </label>
-                  {/* )} */}
-                  {/* /> */}
+                  
                 </div>
 
                 {file.length > 0 && (
@@ -253,7 +250,7 @@ export default function Page() {
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
               </div>
               <Button type="submit" variant="contained" color="primary">
-                {pending ? <CircularProgress size={24} /> : "Add Brand"}
+                {pending ? <CircularProgress size={24} /> : "Add Category"}
               </Button>
             </form>
           </>
@@ -268,12 +265,12 @@ export default function Page() {
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
               <Autocomplete
-                id="brand_id"
+                id="category_id"
                 freeSolo
-                options={brands?.brand_id ? [String(brands?.brand_id)] : []}
+                options={category?.category_id ? [String(category?.category_id)] : []}
                 renderInput={(params) => (
                   <Controller
-                    name="brand_id"
+                    name="category_id"
                     control={control}
                     render={({ field }) => (
                       <>
@@ -282,12 +279,12 @@ export default function Page() {
                           {...field}
                           {...params}
                           type="number"
-                          placeholder={brands?.brand_id}
-                          error={!!errors.brand_id}
-                          // value={field.value || brands?.brand_id}
+                          placeholder={String(category?.category_id)}
+                          error={!!errors.category_id}
+                          // value={field.value || category?.category_id}
                           value={field.value}
                           helperText={
-                            errors.brand_id ? errors.brand_id.message : ""
+                            errors.category_id ? errors.category_id.message : ""
                           }
                         />
                       </>
@@ -299,7 +296,7 @@ export default function Page() {
               <Autocomplete
                 id="name"
                 freeSolo
-                options={brands?.name ? [brands?.name] : []}
+                options={category?.name ? [category?.name] : []}
                 renderInput={(params) => (
                   <Controller
                     name="name"
@@ -310,7 +307,7 @@ export default function Page() {
                         <TextField
                           {...field}
                           {...params}
-                          placeholder={brands?.name}
+                          placeholder={category?.name}
                           value={field.value}
                           type="string"
                           error={!!errors.name}
@@ -322,14 +319,14 @@ export default function Page() {
                 )}
               />
               <Autocomplete
-                id="country_of_origin"
+                id="parent_Category"
                 freeSolo
                 options={
-                  brands?.country_of_origin ? [brands?.country_of_origin] : []
+                  category?.parent_Category ? [category?.parent_Category] : []
                 }
                 renderInput={(params) => (
                   <Controller
-                    name="country_of_origin"
+                    name="parent_Category"
                     control={control}
                     render={({ field }) => (
                       <>
@@ -337,7 +334,7 @@ export default function Page() {
                         <TextField
                           {...field}
                           {...params}
-                          placeholder={brands?.country_of_origin}
+                          placeholder={category?.parent_Category}
                           value={field.value}
                           fullWidth
                         />
@@ -350,7 +347,7 @@ export default function Page() {
                 id="description"
                 freeSolo
                 options={
-                  brands?.description ? [brands?.description] : []
+                  category?.description ? [category?.description] : []
                 }
                 renderInput={(params) => (
                   <Controller
@@ -364,7 +361,7 @@ export default function Page() {
                           {...params}
                           multiline
                           rows={4}
-                          placeholder={brands?.description}
+                          placeholder={category?.description}
                           value={field.value}
                           error={!!errors.description}
                           helperText={
@@ -382,8 +379,8 @@ export default function Page() {
                 <Image
                   alt="brand logo"
                   src={
-                    brands?.logo_url
-                      ? `http://localhost:5000/${brands?.logo_url}`
+                    category?.category_image
+                      ? `http://localhost:5000/${category?.category_image}`
                       : "/DummyPlaceholder.webp"
                   }
                   height={300}
@@ -392,19 +389,19 @@ export default function Page() {
               </>
               <div>
                 <Typography variant="h6" gutterBottom className="text-center">
-                  Add Brand Logo to overwrite current logo
+                  Add Category Logo to overwrite current logo
                 </Typography>
                 <div className="mb-4">
                   <label
-                    htmlFor="logo_url"
+                    htmlFor="category_image"
                     className="text-center text-xl cursor-pointer flex flex-col items-center justify-center gap-3 bg-slate-200 hover:bg-slate-300 p-6 rounded-md"
                   >
                     <Upload className="text-gray-500" />
                     <span className="text-gray-700">Brand Images</span>
                     <input
-                      name="logo_url"
+                      name="category_image"
                       type="file"
-                      id="logo_url"
+                      id="category_image"
                       accept="image/*"
                       onChange={(e) => {
                         if (e.target.files && e.target.files.length > 0) {
@@ -416,8 +413,6 @@ export default function Page() {
                       className="hidden"
                     />
                   </label>
-                  {/* )} */}
-                  {/* /> */}
                 </div>
 
                 {file.length > 0 && (
@@ -435,7 +430,7 @@ export default function Page() {
                 color="primary"
                 className="w[100%] mx-auto"
               >
-                {pending ? <CircularProgress size={24} /> : "Add Brand"}
+                {pending ? <CircularProgress size={24} /> : "Edit Category"}
               </Button>
             </form>
           </>

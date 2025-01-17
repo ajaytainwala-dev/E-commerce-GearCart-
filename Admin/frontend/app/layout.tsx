@@ -24,7 +24,7 @@ import {
 import Footer from "@/components/Footer/Footer"
 import Link from "next/link";
 import "./globals.css"
-import { Building2 } from "lucide-react";
+import { Building2 ,AlignLeft} from "lucide-react";
 
 import NextTopLoader from "nextjs-toploader";
 const drawerWidth = 240;
@@ -33,6 +33,7 @@ const menuItems = [
   { text: "Dashboard", icon: <Dashboard />, href: "/Dashboard" },
   { text: "Products", icon: <Inventory />, href: "/products" },
   { text: "Brands", icon: <Building2 />, href: "/Brands" },
+  { text: "Category", icon: <AlignLeft  />, href: "/Category" },
   { text: "Users", icon: <People />, href: "/Users" },
   { text: "Offers", icon: <LocalOffer />, href: "/offers" },
   { text: "Orders", icon: <ShoppingCart />, href: "/orders" },

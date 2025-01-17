@@ -38,19 +38,21 @@ const upload = multer({
 });
 
 class CategoryController {
-  public path: string = "/Category";
+  
+  public path: string = "/category";
   public router = Router();
 
   constructor() {
     this.initializeRoutes();
   }
 
+  
   private initializeRoutes() {
     this.router.get("/", this.getAllCategorys);
     this.router.get("/:id", this.getCategoryById);
     this.router.post(
       "/",
-      upload.single("iamge"),
+      upload.single("image"),
       AdminMiddleware,
       this.createCategory
     );
