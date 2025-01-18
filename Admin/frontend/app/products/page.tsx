@@ -14,9 +14,10 @@ import {
   Alert,
   CircularProgress,
 } from "@mui/material";
-import { Add,  Delete } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import Link from "next/link";
 import { useFetch } from "../hooks/useFetch";
+import Image from "next/image";
 
 interface Product {
   _id: number;
@@ -24,6 +25,7 @@ interface Product {
   name: string;
   price: number;
   stock: number;
+  imageUrl: string[];
 }
 
 interface Data {
@@ -117,10 +119,11 @@ export default function ProductList() {
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
+                <TableCell>Product Image</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Price</TableCell>
                 <TableCell>Stock</TableCell>
-                <TableCell sx={{textAlign:"center"}}>Actions</TableCell>
+                <TableCell sx={{ textAlign: "center" }}>Actions</TableCell>
                 <TableCell>More Details</TableCell>
               </TableRow>
             </TableHead>
@@ -128,10 +131,23 @@ export default function ProductList() {
               {products.products.map((product) => (
                 <TableRow key={product._id}>
                   <TableCell>{product.id}</TableCell>
+                  <TableCell>
+                    <Image
+                      src={
+                        product.imageUrl
+                          ? `http://localhost:5000/${product.imageUrl}`
+                          : "/DummyPlaceholder.webp"
+                      }
+                      alt={product.name}
+                      width={50}
+                      height={50}
+                    />
+                  </TableCell>
+
                   <TableCell>{product.name}</TableCell>
                   <TableCell>₹{product.price.toFixed(2)}</TableCell>
                   <TableCell>{product.stock}</TableCell>
-                  <TableCell sx={{textAlign:"center"}}>
+                  <TableCell sx={{ textAlign: "center" }}>
                     {/* <Link href={`/products/edit/${product.id}`} passHref>
                       <Button startIcon={<Edit />} size="small">
                         Edit
@@ -146,10 +162,15 @@ export default function ProductList() {
                     </Button>
                   </TableCell>
                   <TableCell>
-                    <Link href={`/products/ViewProduct/${product._id}`} passHref>
-                      <Button size="small" variant="contained">View More</Button>
+                    <Link
+                      href={`/products/ViewProduct/${product._id}`}
+                      passHref
+                    >
+                      <Button size="small" variant="contained">
+                        View More
+                      </Button>
                     </Link>
-                    </TableCell>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -8,7 +8,7 @@ import {
   AttachMoney,
   ShoppingCart,
 } from "@mui/icons-material";
-import { Building2 } from "lucide-react";
+import { AlignLeft, Building2 } from "lucide-react";
 
 
 export default function Dashboard() {
@@ -20,6 +20,8 @@ export default function Dashboard() {
         { title: "Total Revenue", value: "0", icon: <AttachMoney /> },
         { title: "Total Orders", value: 0, icon: <ShoppingCart /> },
         { title: "Total Brands", value: 0, icon: <Building2 /> },
+        { title: "Total Categories", value: 0, icon: <AlignLeft /> },
+
     ]);
   const fetchUsers = async () => {
     try {
@@ -35,11 +37,32 @@ export default function Dashboard() {
         // setUsers(data);
         // setUserCount(data.length);
         setStats([
-            { title: "Total Users", value: data.totalUsers, icon: <People /> },
-            { title: "Total Products", value: data.totalProducts, icon: <Inventory /> },
-            { title: "Total Revenue", value: data.totalRevenue, icon: <AttachMoney /> },
-            { title: "Total Orders", value: data.totalOrders, icon: <ShoppingCart /> },
-            { title: "Total Brands", value: data.totalBrands, icon: <Building2/> },
+          { title: "Total Users", value: data.totalUsers, icon: <People /> },
+          {
+            title: "Total Products",
+            value: data.totalProducts,
+            icon: <Inventory />,
+          },
+          {
+            title: "Total Revenue",
+            value: data.totalRevenue,
+            icon: <AttachMoney />,
+          },
+          {
+            title: "Total Orders",
+            value: data.totalOrders,
+            icon: <ShoppingCart />,
+          },
+          {
+            title: "Total Brands",
+            value: data.totalBrands,
+            icon: <Building2 />,
+          },
+          {
+            title: "Total Categories",
+            value: data.totalCatrgories,
+            icon: <AlignLeft />,
+          },
         ]);
     } catch (error) {
       console.log(error);

@@ -38,7 +38,6 @@ const upload = multer({
 });
 
 class CategoryController {
-  
   public path: string = "/category";
   public router = Router();
 
@@ -46,7 +45,6 @@ class CategoryController {
     this.initializeRoutes();
   }
 
-  
   private initializeRoutes() {
     this.router.get("/", this.getAllCategorys);
     this.router.get("/:id", this.getCategoryById);
@@ -86,9 +84,7 @@ class CategoryController {
       const id = req.params.id;
       const category = await Category.findById(id);
       if (!category) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Category not found" });
+        res.status(404).json({ success: false, message: "Category not found" });
       }
       res.status(200).json({ success: true, Category: category });
     } catch (error: any) {

@@ -6,11 +6,14 @@ import {
   Button,
   Paper,
   CircularProgress,
-  Autocomplete
+  // Autocomplete,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import { useRouter, useParams } from "next/navigation";
-import { Category,CategoryData } from "@/Types";
+import { Category, CategoryData } from "@/Types";
 import { Upload } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import Image from "next/image";
@@ -22,24 +25,46 @@ export default function Page() {
   const [file, setFile] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [category, setcategory] = useState<Category>();
-  const fetchBrand = async () => {
+  const [AllCategory, setAllCategory] = useState<Category[]>();
+  // const [age, setAge] = useState<number | string>('');
+
+  const fetchAllCategories = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/brand/${action[1]}`, {
+      const response = await fetch(`http://localhost:5000/category/`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      const data: CategoryData = await response.json();
+      setAllCategory(data.Category);
+    } catch (error) {
+      setError(`${error}`);
+    }
+  };
+
+  const fetchCategory = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/category/${action[1]}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       const data = await response.json();
-      setcategory(data.brand);
+      setcategory(data.Category);
     } catch (error) {
       setError(`${error}`);
     }
   };
   useEffect(() => {
     if (action[0] === "Edit") {
-      fetchBrand();
+      fetchCategory();
     }
+    fetchAllCategories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -48,7 +73,7 @@ export default function Page() {
       return { ...category };
     } else {
       return {
-        category_id: "",
+        category_id: 0,
         name: "",
         description: "",
         parent_Category: "",
@@ -98,25 +123,28 @@ export default function Page() {
   };
   const UpdateSubmit = async (data: Category) => {
     try {
+      console.log(data);
       setError(null);
       const formData = new FormData();
-      formData.append("logo", file[0]);
+      formData.append("image", file[0]);
       formData.append("category_id", String(data.category_id));
       formData.append("name", data.name);
       // formData.append("parent_Category", data.parent_Category);
       formData.append("description", data.description);
 
-      const response = await fetch(`http://localhost:5000/brand/${action[1]}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        `http://localhost:5000/category/${action[1]}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formData,
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to upload image.");
 
-      // setSubmitted(true);
       setTimeout(() => {
         router.push("/Success/Category");
       }, 1000);
@@ -152,16 +180,18 @@ export default function Page() {
                     required
                     type="number"
                     label="Category ID"
-                    value={field.value}
+                    value={field.value ?? 0}
                     error={!!errors.category_id}
-                    helperText={errors.category_id ? errors.category_id.message : ""}
+                    helperText={
+                      errors.category_id ? errors.category_id.message : ""
+                    }
                   />
                 )}
               />
               <Controller
                 name="name"
                 control={control}
-                rules={{ required: "Brand name is required" }}
+                rules={{ required: "Category name is required" }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -175,19 +205,31 @@ export default function Page() {
                   />
                 )}
               />
-              {/* <Controller
+
+              <InputLabel id="demo-simple-select-label">
+                Parent Category
+              </InputLabel>
+              <Controller
                 name="parent_Category"
                 control={control}
                 render={({ field }) => (
-                  <TextField
+                  <Select
                     {...field}
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
                     value={field.value}
-                    fullWidth
-                    type="Object"
-                    label="Parent Category"
-                  />
+                    onChange={(event) => field.onChange(event.target.value)}
+                  >
+                    <MenuItem value={0}>None</MenuItem>
+                    {AllCategory &&
+                      AllCategory.map((cat) => (
+                        <MenuItem key={cat.category_id} value={cat.category_id}>
+                          {cat.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
                 )}
-              /> */}
+              />
               <Controller
                 name="description"
                 control={control}
@@ -213,19 +255,14 @@ export default function Page() {
                   Add Category Image
                 </Typography>
                 <div className="mb-4">
-                 
-                  <label
-                    // htmlFor="category_image"
-                    className="text-center text-xl cursor-pointer flex flex-col items-center justify-center gap-3 bg-slate-200 hover:bg-slate-300 p-6 rounded-md"
-                  >
+                  <label className="text-center text-xl cursor-pointer flex flex-col items-center justify-center gap-3 bg-slate-200 hover:bg-slate-300 p-6 rounded-md">
                     <Upload className="text-gray-500" />
                     <span className="text-gray-700">Category Images</span>
                     <input
-                    name="category_image"
+                      name="category_image"
                       type="file"
                       id="category_image"
                       accept="image/*"
-                      // {...field}
                       onChange={(e) => {
                         if (e.target.files && e.target.files.length > 0) {
                           setFile(Array.from(e.target.files));
@@ -233,11 +270,10 @@ export default function Page() {
                           alert("You can only upload 1 file.");
                         }
                       }}
-                      // className="hidden"
+                      className="hidden"
                       required
                     />
                   </label>
-                  
                 </div>
 
                 {file.length > 0 && (
@@ -249,8 +285,13 @@ export default function Page() {
                 )}
                 {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
               </div>
-              <Button type="submit" variant="contained" color="primary">
-                {pending ? <CircularProgress size={24} /> : "Add Category"}
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                className="w-full mx-auto"
+              >
+                Add Category
               </Button>
             </form>
           </>
@@ -258,17 +299,13 @@ export default function Page() {
         {action[0] === "Edit" && (
           <>
             <Typography variant="h4" gutterBottom>
-              Edit Brand
+              Edit Category Details
             </Typography>
             <form
               onSubmit={handleSubmit(UpdateSubmit)}
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
-              <Autocomplete
-                id="category_id"
-                freeSolo
-                options={category?.category_id ? [String(category?.category_id)] : []}
-                renderInput={(params) => (
+        
                   <Controller
                     name="category_id"
                     control={control}
@@ -277,12 +314,12 @@ export default function Page() {
                         <Typography>Brand ID</Typography>
                         <TextField
                           {...field}
-                          {...params}
                           type="number"
                           placeholder={String(category?.category_id)}
                           error={!!errors.category_id}
-                          // value={field.value || category?.category_id}
+                          defaultValue={(category?.category_id)}
                           value={field.value}
+
                           helperText={
                             errors.category_id ? errors.category_id.message : ""
                           }
@@ -290,14 +327,7 @@ export default function Page() {
                       </>
                     )}
                   />
-                )}
-              />
-
-              <Autocomplete
-                id="name"
-                freeSolo
-                options={category?.name ? [category?.name] : []}
-                renderInput={(params) => (
+             
                   <Controller
                     name="name"
                     control={control}
@@ -305,9 +335,10 @@ export default function Page() {
                       <>
                         <Typography>Brand Name</Typography>
                         <TextField
+                          fullWidth
                           {...field}
-                          {...params}
                           placeholder={category?.name}
+                          // defaultValue={category?.name}
                           value={field.value}
                           type="string"
                           error={!!errors.name}
@@ -316,61 +347,54 @@ export default function Page() {
                       </>
                     )}
                   />
+              
+
+              <InputLabel id="demo-simple-select-label">
+                Parent Category
+              </InputLabel>
+              <Controller
+                name="parent_Category"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    defaultValue={category?.parent_Category ?? ""}
+                    value={field.value}
+                    onChange={(event) => field.onChange(event.target.value)}
+                  >
+                    <MenuItem value={0}>None</MenuItem>
+                    {AllCategory &&
+                      AllCategory.map((cat) => (
+                        <MenuItem key={cat.category_id} value={cat._id}>
+                          {cat.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
                 )}
               />
-              <Autocomplete
-                id="parent_Category"
-                freeSolo
-                options={
-                  category?.parent_Category ? [category?.parent_Category] : []
-                }
-                renderInput={(params) => (
-                  <Controller
-                    name="parent_Category"
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        <Typography>Country of Origin</Typography>
-                        <TextField
-                          {...field}
-                          {...params}
-                          placeholder={category?.parent_Category}
-                          value={field.value}
-                          fullWidth
-                        />
-                      </>
-                    )}
-                  />
-                )}
-              />
-              <Autocomplete
-                id="description"
-                freeSolo
-                options={
-                  category?.description ? [category?.description] : []
-                }
-                renderInput={(params) => (
-                  <Controller
-                    name="description"
-                    control={control}
-                    render={({ field }) => (
-                      <>
-                        <Typography>Description</Typography>
-                        <TextField
-                          {...field}
-                          {...params}
-                          multiline
-                          rows={4}
-                          placeholder={category?.description}
-                          value={field.value}
-                          error={!!errors.description}
-                          helperText={
-                            errors.description ? errors.description.message : ""
-                          }
-                        />
-                      </>
-                    )}
-                  />
+
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <Typography>Description</Typography>
+                    <TextField
+                      {...field}
+                      fullWidth
+                      multiline
+                      rows={4}
+                      placeholder={category?.description}
+                      defaultValue={category?.description || 0}
+                      value={field.value}
+                      error={!!errors.description}
+                      helperText={
+                        errors.description ? errors.description.message : ""
+                      }
+                    />
+                  </>
                 )}
               />
 
@@ -389,7 +413,7 @@ export default function Page() {
               </>
               <div>
                 <Typography variant="h6" gutterBottom className="text-center">
-                  Add Category Logo to overwrite current logo
+                  Reupload category image to overwrite current logo
                 </Typography>
                 <div className="mb-4">
                   <label
@@ -397,7 +421,7 @@ export default function Page() {
                     className="text-center text-xl cursor-pointer flex flex-col items-center justify-center gap-3 bg-slate-200 hover:bg-slate-300 p-6 rounded-md"
                   >
                     <Upload className="text-gray-500" />
-                    <span className="text-gray-700">Brand Images</span>
+                    <span className="text-gray-700">Category Images</span>
                     <input
                       name="category_image"
                       type="file"

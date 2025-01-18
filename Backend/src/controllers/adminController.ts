@@ -1,11 +1,18 @@
-import { Router, Request, Response, NextFunction, RequestHandler } from "express";
+import {
+  Router,
+  Request,
+  Response,
+  NextFunction,
+  RequestHandler,
+} from "express";
 import multer from "multer";
 import { Product as Part } from "../models/Product";
 import { User } from "../models/User";
 import Purchase from "../models/Purchase";
 import AuthMiddleware from "../middlewares/adminMiddleware";
 import path from "path";
-import Brand  from "../models/Brand";
+import Brand from "../models/Brand";
+import Category from "../models/Categories";
 
 const storage = multer.diskStorage({
   destination: "./uploads/",
@@ -16,7 +23,11 @@ const storage = multer.diskStorage({
     );
   },
 });
-const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+const fileFilter = (
+  _req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
   const filetypes = /jpeg|jpg|png|gif|webp/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
@@ -27,7 +38,11 @@ const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFil
     cb(new Error("Only images are allowed"));
   }
 };
-const upload = multer({ storage: storage, fileFilter: fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
 class AdminController {
   public path: string = "/admin";
   public router = Router();
@@ -38,16 +53,33 @@ class AdminController {
 
   private initializeRoutes() {
     this.router.get(`/users`, AuthMiddleware as RequestHandler, this.getUsers);
-    this.router.post(`/add-product`, AuthMiddleware as RequestHandler, this.addProduct);
+    this.router.post(
+      `/add-product`,
+      AuthMiddleware as RequestHandler,
+      upload.array("images", 4),
+      this.addProduct
+    );
 
-    this.router.get(`/dashboard`, AuthMiddleware as RequestHandler, this.getDashboardData);
-    this.router.get(`/stock/:id`, AuthMiddleware as RequestHandler, this.getProductsInStock);
+    this.router.get(
+      `/dashboard`,
+      AuthMiddleware as RequestHandler,
+      this.getDashboardData
+    );
+    this.router.get(
+      `/stock/:id`,
+      AuthMiddleware as RequestHandler,
+      this.getProductsInStock
+    );
     this.router.post(
       `/offer/:productId/:discountPercentage`,
       AuthMiddleware as RequestHandler,
       this.addOffer
     );
-    this.router.get(`/orders`, AuthMiddleware as RequestHandler, this.viewOrders);
+    this.router.get(
+      `/orders`,
+      AuthMiddleware as RequestHandler,
+      this.viewOrders
+    );
     this.router.post(
       "/add/:id",
       AuthMiddleware as RequestHandler,
@@ -102,7 +134,6 @@ class AdminController {
    */
   private uploadImage = async (req: Request, res: Response) => {
     try {
-      console.log(req.files);
       const imageUrl = Array.isArray(req.files)
         ? req.files.map((file: any) => file.path)
         : [];
@@ -162,13 +193,13 @@ class AdminController {
       compatibility,
     } = req.body;
 
-    // const imageUrl = Array.isArray(req.files)
-    //   ? req.files.map((file: any) => file.path)
-    //   : [];
+    const imageUrl = Array.isArray(req.files)
+      ? req.files.map((file: any) => file.path)
+      : [];
 
-    // if (!imageUrl) {
-    //   return res.status(400).json({ error: "Image is required" });
-    // }
+    if (!imageUrl) {
+      return res.status(400).json({ error: "Image is required" });
+    }
     const part = await Part.findOne({ partNumber, OEMPartNumber });
     if (part) {
       return res
@@ -194,10 +225,10 @@ class AdminController {
         supplierName,
         vehicleType,
         compatibility: compatibility ? compatibility.split(",") : [], // Convert to array
-        // imageUrl,
+        imageUrl,
       });
       await newProduct.save();
-      return res.status(201).json({id : newProduct._id});
+      return res.status(201).json({ id: newProduct._id });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Internal Server Error" });
@@ -223,12 +254,14 @@ class AdminController {
       const totalOrders = await Purchase.countDocuments();
       const totalProducts = await Part.countDocuments();
       const totalBrands = await Brand.countDocuments();
+      const totalCatrgories = await Category.countDocuments();
       return res.status(200).json({
         totalUsers,
         totalProducts,
         totalRevenue: totalRevenue[0]?.total || 0,
         totalOrders,
-        totalBrands
+        totalBrands,
+        totalCatrgories,
       });
     } catch (error) {
       return res.status(500).json({ error: "Internal Server Error" });
