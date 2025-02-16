@@ -1,183 +1,247 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
-import { Typography, Button } from "@mui/material";
+import {
+  Typography,
+  Button,
+  TableContainer,
+  TableRow,
+  TableCell,
+  Table,
+  TableBody,
+  Paper,
+  TableHead
+} from "@mui/material";
+import { Context } from "@/app/ContextAPI/AppContext";
+import { Category, Product, Brand } from "@/Types";
+import { Edit, Trash } from "lucide-react";
 
-interface Product {
-  _id: string;
-  id: number;
-  partNumber: string;
-  OEMPartNumber: string;
-  name: string;
-  price: number;
-  category: string;
-  imageUrl: string;
-  discount: number;
-  compatibility: string[];
-  description: string;
-  image: string;
-  supplierName: string;
-  vehicleType: string;
-  stock: number;
-  brand: string;
-}
-
-interface Data {
-  product: Product;
+interface ResponseData {
   success: boolean;
+  product: Product;
+  category: Category;
+  brand: Brand;
 }
 
 const Page = () => {
-  const { id } = useParams();
-  const [product, setProducts] = useState<Data>({
+  const { fetchAdminProduct } = useContext(Context);
+  const { id } = useParams() as { id: string };
+
+  const [data, setData] = useState<ResponseData>({
+    success: false,
     product: {
       _id: "",
       id: 0,
-      OEMPartNumber: "",
       partNumber: "",
+      OEMPartNumber: "",
       name: "",
-      category: "",
       price: 0,
-      vehicleType: "",
-      discount: 0,
-      supplierName: "",
-      compatibility: [],
+      category: "",
       imageUrl: "",
+      discount: 0,
+      compatibility: [],
       description: "",
-      image: "",
-      brand: "",
+      supplierName: "",
+      vehicleType: "",
       stock: 0,
+      brand: "",
     },
-    success: false,
+    category: {
+      _id: 0,
+      category_id: 0,
+      category_image: "",
+      name: "",
+      description: "",
+      parent_Category: "",
+    },
+    brand: {
+      _id: 0,
+      brand_id: "",
+      name: "",
+      description: "",
+      country_of_origin: "",
+      logo_url: "",
+    },
   });
-  const fetchCategoryProducts = async () => {
+
+  const fetchAdminProducts = async () => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/product/product/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      const data: Data = await response.json();
-      console.log(data);
-      setProducts(data);
+      if (id) {
+        const { success, product, category, brand } = await fetchAdminProduct(
+          id
+        );
+        setData({
+          success: success,
+          product: product,
+          category: category,
+          brand: brand,
+        });
+        console.log("Product fetched");
+        // console.log(success, product, category, brand);
+      }
     } catch (error) {
       console.log(error);
     }
   };
-  React.useEffect(() => {
-    fetchCategoryProducts();
-    console.log("useEffect", id);
-    //eslint-disable-next-line
+
+  useEffect(() => {
+    fetchAdminProducts();
+    //  eslint-disable-next-line
   }, []);
+  // console.log(data);
   return (
     <>
       <section className="text-gray-600 body-font overflow-hidden">
         <div className="container px-5 py-24 mx-auto">
-          <div className="lg:w-4/5 mx-auto flex flex-wrap items-center ">
-            <Image
-              alt="ecommerce"
-              className="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded border-2  shadow-xl"
-              src={
-                product.product.imageUrl
-                  ? `http://localhost:5000/${product.product.imageUrl[0]}`
-                  : "/DummyPlaceholder.webp"
-              }
-              width={600}
-              height={600}
-             
-            />
-            <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
-              <Typography
-                variant="h2"
-                className="text-red-900 text-4xl title-font font-medium mb-1"
-              >
-                {product.product.name}
-              </Typography>
-              <Typography className="text-lg title-font text-gray-600  tracking-widest">
-                Brand : {product.product.brand}
-              </Typography>
-              <Typography> ID : {product.product.id}</Typography>
-              <Typography>Product ID : {product.product._id}</Typography>
-              <Typography>Part No : {product.product.partNumber}</Typography>
-              <Typography>
-                OEM Part Number No : {product.product.OEMPartNumber}
-              </Typography>
-              <Typography>Item in Stock : {product.product.stock}</Typography>
-              <Typography>
-                Supplier Name :{" "}
-                {product.product.supplierName
-                  .split(" ")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")}
-              </Typography>
-              <Typography>
-                Vehicle Type :{" "}
-                {product.product.vehicleType
-                  .split(" ")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")}
-              </Typography>
-              <Typography variant="h6">
-                Compatability :{" "}
-                {product.product.compatibility.map((item) => (
-                  <Typography variant="body1" key={item} className="ml-4">
-                    {item
+          <TableContainer component={Paper}>
+            <Table>
+                    <TableHead>
+                    <TableRow>
+                      <TableCell colSpan={2} align="center">
+                      <Typography variant="h4" className="text-[3rem] text-center">
+                        Product Details
+                      </Typography>
+                      </TableCell>
+                    </TableRow>
+                    </TableHead>
+              <TableBody className="m-auto">
+                <TableRow>
+                  <TableCell colSpan={2} align="center">
+                    <Image
+                      alt="ecommerce"
+                      className="w-[30%] m-auto object-cover object-center rounded border-2 shadow-xl"
+                      src={
+                        data.product.imageUrl
+                          ? `http://localhost:5000/${data.product.imageUrl[0]}`
+                          : "/DummyPlaceholder.webp"
+                      }
+                      width={600}
+                      height={600}
+                      priority={true}
+                    />
+                    <Typography
+                      variant="h3"
+                      align="center"
+                      className="mt-4 text-blue-700 my-5 text-[3rem]"
+                    >
+                      {data.product.name}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Brand</TableCell>
+                  <TableCell>{data.brand.name}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">ID</TableCell>
+                  <TableCell>{data.product.id}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Product ID</TableCell>
+                  <TableCell>{data.product._id}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Part No</TableCell>
+                  <TableCell>{data.product.partNumber}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">OEM Part Number</TableCell>
+                  <TableCell>{data.product.OEMPartNumber}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Item in Stock</TableCell>
+                  <TableCell>{data.product.stock}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Supplier Name</TableCell>
+                  <TableCell>
+                    {data.product.supplierName
                       .split(" ")
                       .map(
                         (word) => word.charAt(0).toUpperCase() + word.slice(1)
                       )
                       .join(" ")}
-                  </Typography>
-                ))}
-              </Typography>
-              <Typography className="text-lg mt-4 title-font text-gray-600  tracking-widest">
-                Category :{" "}
-                {product.product.category
-                  .split(" ")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")}
-              </Typography>
-
-              <Typography className="leading-relaxed">
-                Description : {product.product.description}
-              </Typography>
-
-              <div className="flex flex-col flex-wrap mt-4">
-                <Typography
-                  variant="h6"
-                  className="title-font font-medium text-2xl text-gray-900"
-                >
-                  Discount : {product.product.discount}%
-                </Typography>
-                <Typography
-                  variant="h6"
-                  className="title-font font-medium text-2xl text-gray-900"
-                >
-                  Price : ₹{product.product.price}
-                </Typography>
-                <Typography
-                  variant="h6"
-                  className="title-font font-medium text-2xl text-gray-900"
-                >
-                  Discounted Price : ₹
-                  {(product.product.price / 100) *
-                    (100 - product.product.discount)}
-                </Typography>
-                <Button
-                  variant="contained"
-                  className=" ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded mt-8"
-                >
-                  Edit
-                </Button>
-              </div>
-            </div>
-          </div>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Vehicle Type</TableCell>
+                  <TableCell>
+                    {data.product.vehicleType
+                      .split(" ")
+                      .map(
+                        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+                      )
+                      .join(" ")}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Compatibility</TableCell>
+                  <TableCell>
+                    {data.product.compatibility.map((item) => (
+                      <Typography
+                        variant="body1"
+                        key={item}
+                        className="text-red-600 font-bold"
+                      >
+                        {item
+                          .split(" ")
+                          .map(
+                            (word) =>
+                              word.charAt(0).toUpperCase() + word.slice(1)
+                          )
+                          .join(" ")}
+                      </Typography>
+                    ))}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Category</TableCell>
+                  <TableCell>{data.category?.name || "N/A"}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Description</TableCell>
+                  <TableCell>{data.product.description}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Discount</TableCell>
+                  <TableCell>{data.product.discount}%</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Price</TableCell>
+                  <TableCell>₹{data.product.price}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">
+                    Discounted Price
+                  </TableCell>
+                  <TableCell>
+                    ₹
+                    {Math.floor((data.product.price / 100) * (100 - data.product.discount))}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Actions</TableCell>
+                  <TableCell>
+                    <div className="flex gap-4 items-center justify-center">
+                      <Button
+                        variant="contained"
+                        className="ml-auto text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded mt-8 mx-5"
+                      >
+                        Edit Product <Edit />
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className="text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded mr-4 "
+                      >
+                        Delete Product <Trash />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
       </section>
     </>

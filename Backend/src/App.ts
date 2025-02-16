@@ -5,16 +5,17 @@ import cors from "cors";
 import bodypaser from "body-parser";
 dotenv.config();
 
+
+
 class App {
   public app: Application;
   public port: number;
-  constructor(controller: any[], port: number) {
+  constructor(controllers: { path: string; router: express.Router }[], port: number) {
     this.app = express();
     this.port = port;
-
     this.connectToDatabase();
     this.initializeMiddleware();
-    this.initializeController(controller);
+    this.initializeController(controllers);
   }
 
   private connectToDatabase() {
@@ -40,12 +41,12 @@ class App {
     this.app.use(bodypaser.urlencoded({ extended: true }));
   }
 
-  private initializeController(controller: any[]) {
-    if (controller.length === 0) {
+  private initializeController(controllers: { path: string; router: express.Router }[]) {
+    if (controllers.length === 0) {
       console.log("No controller found");
       return;
     }
-    controller.forEach((controller) => {
+    controllers.forEach((controller) => {
       this.app.use(controller.path, controller.router);
     });
   }

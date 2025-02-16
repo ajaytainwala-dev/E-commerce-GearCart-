@@ -89,7 +89,7 @@ const Category = () => {
                           {category.name}
                         </Typography>
                         <Link
-                          href={`Category/${category.name}`}
+                          href={`Category/${category._id}`}
                           style={{ color: "blue" }}
                           className="flex items-center justify-center my-5"
                         >

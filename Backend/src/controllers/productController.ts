@@ -9,7 +9,13 @@
  * @file /D:/Projects/E-Commerce/Backend/src/controllers/productController.ts
  */
 
-import { Router, Request, Response } from "express";
+import {
+  Router,
+  Request,
+  Response,
+  RequestHandler,
+  NextFunction,
+} from "express";
 import dotenv from "dotenv";
 dotenv.config();
 import { Product } from "../models/Product";
@@ -18,6 +24,8 @@ import multer from "multer";
 import path from "path";
 import AdminMiddleware from "../middlewares/adminMiddleware";
 import AuthMiddleware from "../middlewares/middleware";
+import Brand from "../models/Brand";
+import Category from "../models/Categories";
 
 class ProductController {
   public path: string = "/product";
@@ -56,54 +64,125 @@ class ProductController {
   });
 
   private initializeRoutes() {
-    this.router.get("/product/:id", AuthMiddleware, this.getParticularProduct);
-    this.router.get("/allproducts", AuthMiddleware,this.allGetProducts);
+    this.router.get(
+      "/product/:id",
+      AuthMiddleware as RequestHandler,
+      this.getParticularProduct
+    );
+    this.router.get(
+      "/allproducts",
+      AuthMiddleware as RequestHandler,
+      this.allGetProducts
+    );
+    this.router.get(
+      "/adminProduct/:productID",
+      AdminMiddleware as RequestHandler,
+      this.adminProduct
+    );
     this.router.post("/upload", this.upload.single("image"), this.uploadImage);
-    this.router.delete("/remove/:id", AdminMiddleware, this.removeProduct);
+    this.router.delete(
+      "/remove/:id",
+      AdminMiddleware as RequestHandler,
+      this.removeProduct
+    );
     this.router.post("/addproduct", this.createProduct);
     this.router.get("/brand/:brand", this.getProductsByBrand);
-    this.router.get("/category",AuthMiddleware,this.getCategories);
-    
-    this.router.get("/category/:category",AuthMiddleware, this.getProductsByCategory);
+    this.router.get(
+      "/category",
+      AuthMiddleware as RequestHandler,
+      this.getCategories
+    );
+
+    this.router.get(
+      "/category/:category",
+      AuthMiddleware as RequestHandler,
+      this.getProductsByCategory
+    );
     this.router.get("/search", this.searchProduct);
     this.router.get("/partnumber/:partNumber", this.getProductsByPartNumber);
     this.router.put("/update/:id", this.updateProduct);
   }
 
-  private getParticularProduct = async (req: Request, res: Response) => {
+  private getParticularProduct = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const product = await Product.findById(id);
       if (!product) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Product not found" });
+        res.status(404).json({ success: false, message: "Product not found" });
+        return;
       }
       res.status(200).json({ success: true, product: product });
     } catch (error) {
+      next(error);
       res
         .status(500)
         .json({ success: false, message: "Internal server error" });
-      
     }
-  }
+  };
 
-  private getCategories = async (_req: Request, res: Response) => {
+  private getCategories = async (
+    _req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const categories = await Product.distinct("category");
       if (!categories || categories.length === 0) {
-        return res
+        res
           .status(404)
           .json({ success: false, message: "No categories found" });
+        return;
       }
       res.status(200).json({ success: true, categories: categories });
     } catch (error) {
       res
         .status(500)
         .json({ success: false, message: "Internal server error" });
-      
+      next(error);
     }
-  }
+  };
+
+  private adminProduct = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { productID } = req.params;
+      const product = await Product.findById(productID);
+      if (!product) {
+        res.status(404).json({ success: false, message: "Product not found" });
+        return;
+      }
+      const category = await Category.findById(product.category);
+      if (!category) {
+        res.status(404).json({ success: false, message: "Category not found" });
+        return;
+      }
+      const brand = await Brand.findById(product.brand);
+      if (!brand) {
+        res.status(404).json({ success: false, message: "Brand not found" });
+        return;
+      }
+      res
+        .status(200)
+        .json({
+          success: true,
+          product: product,
+          category: category,
+          brand: brand,
+        });
+    } catch (error) {
+      next(error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal server error" });
+    }
+  };
 
   //   Get all product
   /**
@@ -163,17 +242,20 @@ class ProductController {
    */
   private removeProduct = async (
     req: Request,
-    res: Response
-  ): Promise<Response> => {
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       await Product.findByIdAndDelete(id);
-      return res
+      res
         .status(200)
         .json({ success: true, message: "Product removed successfully" });
+      return;
     } catch (error) {
       console.error(error);
-      return res
+      next(error);
+      res
         .status(400)
         .json({ success: false, message: "Failed to remove product" });
     }
@@ -191,15 +273,20 @@ class ProductController {
    *
    * @returns A JSON response with the success status and the created product or an error message.
    */
-  private createProduct = async (req: Request, res: Response) => {
+  private createProduct = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       //   const product: IPart = req.body;
       const { ...others } = req.body;
-      const existingProduct = await Product.findOne({ id: id });
+      const existingProduct = await Product.findOne({ id: others.id });
       if (existingProduct) {
-        return res
+        res
           .status(400)
           .json({ success: false, message: "Product already exists" });
+        return;
       }
       let products = await Product.find({});
       let id;
@@ -215,11 +302,12 @@ class ProductController {
         ...others,
       });
       await newProduct.save();
-      return res.status(201).json({ success: true, product: newProduct });
+      res.status(201).json({ success: true, product: newProduct });
     } catch (error) {
-      return res
+      res
         .status(400)
         .json({ success: false, message: "Failed to create product" });
+      next(error);
     }
   };
 
@@ -246,37 +334,46 @@ class ProductController {
     }
   };
 
-  private getProductsByCategory = async (req: Request, res: Response) => {
+  private getProductsByCategory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
+      
       const { category } = req.params;
-      const products = await Product.find({ category: category });
-      if (!products) {
-        return res
-          .status(404)
-          .json({ success: false, message: "No products found" });
+      const products = await Product.find({ category: category }); // Reverting to find() to fetch products by category
+      if (!products || products.length === 0) {
+        res.status(404).json({ success: false, message: "No products found" });
+        return;
       }
       res.status(200).json({ success: true, products: products });
     } catch (error) {
       res
         .status(500)
         .json({ success: false, message: "Internal server error" });
+      next(error);
     }
   };
 
-  private searchProduct = async (req: Request, res: Response) => {
+  private searchProduct = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { query } = req.query;
       const products = await Product.find({ query });
       if (products.length === 0 || products.length === null) {
-        return res
-          .status(404)
-          .json({ success: false, message: "No products found" });
+        res.status(404).json({ success: false, message: "No products found" });
+        return;
       }
       res.status(200).json({ success: true, products: products });
     } catch (error) {
       res
         .status(500)
         .json({ success: false, message: "Internal server error" });
+      next(error);
     }
   };
 
@@ -292,24 +389,30 @@ class ProductController {
     }
   };
 
-  private updateProduct = async (req: Request, res: Response) => {
+  private updateProduct = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const { id } = req.params;
       const { ...others } = req.body;
       const existingProduct = await Product.findOne({ id: id });
       if (!existingProduct) {
-        return res
+        res
           .status(400)
           .json({ success: false, message: "Product does not exist" });
+        return;
       }
       await Product.findOneAndUpdate({ id: id }, { ...others });
-      return res
+      res
         .status(200)
         .json({ success: true, message: "Product updated successfully" });
     } catch (error) {
-      return res
+      res
         .status(400)
         .json({ success: false, message: "Failed to update product" });
+      next(error);
     }
   };
 }

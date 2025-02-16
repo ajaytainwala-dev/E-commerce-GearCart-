@@ -24,6 +24,7 @@ const app = new App(
 
 app.listen();
 
+
 app.app.use((_req, res, _next) => {
   res.status(404).send("Not Found");
   _next();

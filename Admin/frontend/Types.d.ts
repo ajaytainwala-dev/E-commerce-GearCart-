@@ -1,4 +1,5 @@
 import { CategoryData } from '@/Types';
+import { Product } from '..';
 export interface Brand {
   _id: number;
   brand_id: string;
@@ -25,4 +26,32 @@ export interface Category {
 export interface CategoryData{
     success:boolean;
     Category:Category[];
+}
+
+interface Product {
+  _id: string;
+  id: number;
+  partNumber: string;
+  OEMPartNumber: string;
+  name: string;
+  price: number;
+  category: string;
+  imageUrl: string;
+  discount: number;
+  compatibility: string[];
+  description: string;
+  supplierName: string;
+  vehicleType: string;
+  stock: number;
+  brand: string;
+}
+
+export interface ProductData{
+  success:boolean;
+  products:Product;
+}
+
+export interface DeleteData {
+  success: boolean;
+  message: string;
 }

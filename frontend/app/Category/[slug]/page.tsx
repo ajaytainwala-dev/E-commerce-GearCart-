@@ -59,23 +59,24 @@ const Page = () => {
   return (
     <>
       <div className="container mx-auto p-4">
-        {products.length > 0 && (
+        
+        {products?.length > 0 && (
           <h1 className="text-3xl font-semibold text-center mb-4">
             All Products
           </h1>
         )}
-        {products.length === 0 && (
+        {products?.length === 0 && (
           <h2 className="text-2xl font-semibold text-center text-red-500 h-[50vh] flex items-center justify-center">
             No products found in this category.
           </h2>
         )}
-        <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-auto">
+   <div className="grid  grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-auto">
           {products.map((product) => (
             <div
               key={product._id}
               className="bg-white text-black p-6 rounded-lg border-2 shadow-lg max-w-sm"
             >
-              {/* Product Image */}
+ {/* Product Image  */}
               <div className="flex justify-center mb-4">
                 <div className="bg-gray-700 w-32 h-32 rounded-md">
                   <Image
@@ -99,7 +100,7 @@ const Page = () => {
                 </div>
               </div>
 
-              {/* Product Title */}
+ {/* Product Title  */}
               <h1 className="text-lg text-gray-500 text-center font-semibold  mb-2">
                 {product.brand}
               </h1>
@@ -109,7 +110,7 @@ const Page = () => {
               <p className="text-lg text-left text-black  ">
                 {product.description}
               </p>
-              {/* Product Price */}
+{/* Product Price  */}
               <div
                 className="flex "
                 style={{ justifyContent: "space-between" }}
@@ -144,7 +145,7 @@ const Page = () => {
                   </span>
                 ))}
               </p>
-              {/* Add to Cart Button */}
+ {/* Add to Cart Button  */}
               <button className="w-full flex items-center justify-center bg-blue-600 hover:bg-green-700 text-white font-medium py-2 rounded-md">
                 Add to cart <ShoppingCart className="mx-4" />
               </button>

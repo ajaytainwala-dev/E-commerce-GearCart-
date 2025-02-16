@@ -12,6 +12,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Category, CategoryData } from "@/Types";
+import { Upload } from "lucide-react";
 
 interface IPart {
   id: number;
@@ -25,7 +26,7 @@ interface IPart {
   stock: number;
   description: string;
   vehicleType: string;
-  compatibility: string[];
+  compatibility: string;
   imageUrl: string[];
   supplierName: string;
 }
@@ -47,11 +48,31 @@ export default function Page() {
   const router = useRouter();
   const [brand, setBrand] = React.useState<Brand[]>([]);
   const [category, setCategory] = React.useState<Category[]>([]);
+  const [file, setFile] = React.useState<File[]>([]);
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<IPart>();
+  } = useForm<IPart>(
+    {
+      defaultValues: {
+        id: 0,
+        OEMPartNumber: "",
+        partNumber: "",
+        name: "",
+        brand: "",
+        category: "",
+        price: 0,
+        discount: 0,
+        stock: 0,
+        description: "",
+        vehicleType: "",
+        compatibility: "",
+        imageUrl: [],
+        supplierName: "",
+      },
+    }
+  );
 
   const fetchBrand = async () => {
     try {
@@ -88,20 +109,40 @@ export default function Page() {
     fetchCategory();
   }, []);
   const onSubmit = async (data: IPart) => {
-    console.log(data);
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("price", String(data.price));
+    formData.append("stock", String(data.stock));
+    formData.append("OEMPartNumber", data.OEMPartNumber);
+    formData.append("partNumber", data.partNumber);
+    formData.append("brand", data.brand);
+    formData.append("category", data.category);
+    formData.append("discount", String(data.discount));
+    formData.append("vehicleType", data.vehicleType);
+    formData.append("compatibility", data.compatibility);
+    formData.append("supplierName", data.supplierName);
+    formData.append("description", data.description);
+    formData.append("images", file[0]);
+    // formData.append("images", file[1]);
+    // formData.append("images", file[2]);
+    // formData.append("images", file[3]);
+    setTimeout(() => {
+      console.log(formData);
+    }, 1000);
+    // console.log(formData)
     try {
       const response = await fetch("http://localhost:5000/admin/add-product", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(data),
+        body: formData,
       });
-      const result = await response.json();
+      await response.json();
       setTimeout(() => {
-        router.push(`/products/upload/${result.id}`);
+        router.push(`/products`);
       }, 1000);
+     
     } catch (error) {
       console.error(error);
     }
@@ -133,6 +174,7 @@ export default function Page() {
                   required
                   label="Product Name"
                   error={!!errors.name}
+                  value={field.value}
                   helperText={errors.name ? errors.name.message : ""}
                 />
               )}
@@ -188,13 +230,7 @@ export default function Page() {
                 <TextField {...field} required fullWidth label="Part Number" />
               )}
             />
-            {/* <Controller
-              name="brand"
-              control={control}
-              render={({ field }) => (
-                <TextField {...field} required fullWidth label="Brand" />
-              )}
-            /> */}
+
             <InputLabel id="demo-simple-select-label">Brands</InputLabel>
             <Controller
               name="brand"
@@ -210,7 +246,7 @@ export default function Page() {
                   <MenuItem value={0}>None</MenuItem>
                   {brand &&
                     brand.map((cat) => (
-                      <MenuItem key={cat.brand_id} value={String(cat._id)}>
+                      <MenuItem key={cat.brand_id} value={(cat._id)}>
                         {cat.name}
                       </MenuItem>
                     ))}
@@ -232,21 +268,14 @@ export default function Page() {
                   <MenuItem value={0}>None</MenuItem>
                   {category &&
                     category.map((cat) => (
-                      <MenuItem key={cat.category_id} value={String(cat._id)}>
+                      <MenuItem key={cat.category_id} value={(cat._id)}>
                         {cat.name}
                       </MenuItem>
                     ))}
                 </Select>
               )}
             />
-            {/* 
-            <Controller
-              name="category"
-              control={control}
-              render={({ field }) => (
-                <TextField {...field} required fullWidth label="Category" />
-              )}
-            /> */}
+
             <Controller
               name="discount"
               control={control}
@@ -261,13 +290,6 @@ export default function Page() {
               )}
             />
 
-            <Controller
-              name="vehicleType"
-              control={control}
-              render={({ field }) => (
-                <TextField {...field} required fullWidth label="Vehicle Type" />
-              )}
-            />
             <InputLabel id="demo-simple-select-label">Vehicle Type</InputLabel>
             <Controller
               name="vehicleType"
@@ -325,6 +347,38 @@ export default function Page() {
                 />
               )}
             />
+            <label
+              htmlFor="image"
+              className="text-center text-xl cursor-pointer flex flex-col items-center justify-center gap-3 bg-slate-200 hover:bg-slate-300 p-6 rounded-md"
+            >
+              <Upload className="text-gray-500" />
+              <span className="text-gray-700">Product Images</span>
+              <input
+                type="file"
+                id="image"
+                accept="image/*"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length <= 4) {
+                    setFile(Array.from(e.target.files));
+                  } else {
+                    alert("You can only upload up to 4 files.");
+                  }
+                }}
+                className="hidden"
+                multiple
+                required
+              />
+            </label>
+            <div className="flex gap-4">
+              {file.map((f) => (
+                <img
+                  key={f.name}
+                  src={URL.createObjectURL(f)}
+                  alt={f.name}
+                  className="w-20 h-20 object-cover"
+                />
+              ))}
+            </div>
             <Button type="submit" variant="contained" color="primary">
               Add Product
             </Button>

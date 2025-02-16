@@ -1,4 +1,10 @@
-import { Router, Request, Response } from "express";
+import {
+  Router,
+  Request,
+  Response,
+  RequestHandler,
+  NextFunction,
+} from "express";
 import dotenv from "dotenv";
 import AdminMiddleware from "../middlewares/adminMiddleware";
 // import AuthMiddleware from "../middlewares/middleware";
@@ -51,31 +57,38 @@ class CategoryController {
     this.router.post(
       "/",
       upload.single("image"),
-      AdminMiddleware,
+      AdminMiddleware as RequestHandler,
       this.createCategory
     );
     this.router.put(
       `/:id`,
       upload.single("image"),
-      AdminMiddleware,
+      AdminMiddleware as RequestHandler,
       this.updateCategory
     );
 
-    this.router.delete(`/:id`, AdminMiddleware, this.deleteCategory);
+    this.router.delete(
+      `/:id`,
+      AdminMiddleware as RequestHandler,
+      this.deleteCategory
+    );
   }
 
-  private getAllCategorys = async (_req: Request, res: Response) => {
+  private getAllCategorys = async (
+    _req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const category = await Category.find();
       if (!category || category.length === 0) {
-        return res
-          .status(404)
-          .json({ success: false, message: "No Categorys found" });
-        // throw new ExpressError("No Categorys found", 404);
+        res.status(404).json({ success: false, message: "No Categorys found" });
+        return;
       }
       res.status(200).json({ success: true, Category: category });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
+      next(error);
     }
   };
 
@@ -121,16 +134,19 @@ class CategoryController {
     }
   };
 
-  private updateCategory = async (req: Request, res: Response) => {
+  private updateCategory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = req.params.id;
       const { category_id, name, description, parent_Category } = req.body;
       const category_image = req.file ? req.file.path : "";
       const category = await Category.findById(id);
       if (!category) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Category not found" });
+        res.status(404).json({ success: false, message: "Category not found" });
+        return;
       }
       category.category_id = category_id;
       category.name = name;
@@ -141,22 +157,27 @@ class CategoryController {
       res.status(200).json({ success: true, Category: category });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
+      next(error);
     }
   };
 
-  private deleteCategory = async (req: Request, res: Response) => {
+  private deleteCategory = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = req.params.id;
       const category = await Category.findById(id);
       if (!category) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Category not found" });
+        res.status(404).json({ success: false, message: "Category not found" });
+        return;
       }
       await category.deleteOne();
       res.status(200).json({ success: true, message: "Category deleted" });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
+      next(error);
     }
   };
 }

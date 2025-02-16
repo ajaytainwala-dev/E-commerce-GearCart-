@@ -1,7 +1,13 @@
-import { Router, Request, Response } from "express";
+import {
+  Router,
+  Request,
+  Response,
+  RequestHandler,
+  NextFunction,
+} from "express";
 import dotenv from "dotenv";
 import ExpressError from "../utils/ExpressError";
-import crypto from "node:crypto";
+// import crypto from "node:crypto";
 import ResetEmail from "../utils/Email/ResetEmail";
 dotenv.config();
 import AuthMiddleware from "../middlewares/middleware";
@@ -26,29 +32,37 @@ class authController {
     this.initializeRoutes();
   }
 
-  /**
-   * Initializes the routes for the authentication controller.
-   *
-   * - `GET /`: Retrieves the list of users. Requires authentication.
-   * - `POST /register`: Registers a new user.
-   * - `POST /login`: Logs in a user.
-   * - `PUT /update`: Updates user information. Requires authentication.
-   *
-   * @private
-   * @method initializeRoutes
-   * @returns {void}
-   */
   private initializeRoutes(): void {
+    /**
+     * Initializes the routes for the authentication controller.
+     *
+     * - `GET /`: Retrieves the list of users. Requires authentication.
+     * - `POST /register`: Registers a new user.
+     * - `POST /login`: Logs in a user.
+     * - `PUT /update`: Updates user information. Requires authentication.
+     *
+     * @private
+     * @method initializeRoutes
+     * @returns {void}
+     */
     // Get user's data
-    this.router.get(`/`, AuthMiddleware, this.getUsers);
+    this.router.get(`/`, AuthMiddleware as RequestHandler, this.getUsers);
     // register a new user
     this.router.post(`/register`, this.doRegister);
     // Login a user
     this.router.post(`/login`, this.login);
     // Update user data
-    this.router.put(`/update`, AuthMiddleware, this.updateUser);
+    this.router.put(
+      `/update`,
+      AuthMiddleware as RequestHandler,
+      this.updateUser
+    );
     // Delete a user
-    this.router.delete(`/delete`, AuthMiddleware, this.deleteUser);
+    this.router.delete(
+      `/delete`,
+      AuthMiddleware as RequestHandler,
+      this.deleteUser
+    );
     // Forget Password
     this.router.post(`/forget`, this.forgetPassword);
     // Reset Password
@@ -121,7 +135,11 @@ class authController {
    * 5. Returns the JWT token in the response if login is successful.
    * 6. Returns appropriate error messages for invalid credentials or internal server errors.
    */
-  private login = async (req: Request, res: Response): Promise<Response> => {
+  private login = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     const schema = UserSchemaZod.pick({
       email: true,
       password: true,
@@ -135,19 +153,26 @@ class authController {
     try {
       const user = await User.findOne({ email });
       if (!user) {
-        return res.status(400).json({ error: "Invalid email or password" });
+        res.status(400).json({ error: "Invalid email or password" });
+        return;
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return res.status(400).json({ error: "Invalid email or password" });
+        res.status(400).json({ error: "Invalid email or password" });
+        return;
       }
 
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!);
+      if (!token) {
+        res.status(400).json({ error: "Token not generated" });
+        return;
+      }
 
-      return res.status(200).json({ token: token });
+      res.status(200).json({ token: token });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: "Internal Server Error" });
+      next(error);
     }
   };
 
@@ -165,25 +190,29 @@ class authController {
    * If the token is valid, it fetches the users from the database and sends them in the response.
    * If the token is invalid or any other error occurs, it sends a 400 status with an error message.
    */
-  private getUsers = async (req: Request, res: Response): Promise<Response> => {
-    const userId = (req as any).user.id;
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res
-        .status(400)
-        .json({ error: "Access denied. No token provided." });
-    }
-
+  private getUsers = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
-      jwt.verify(token, process.env.JWT_SECRET!);
+      const userId = (req as any).user.id;
+      const token = req.headers.authorization?.split(" ")[1];
+      if (!token) {
+        next(new ExpressError("No token provided", 401));
+        return;
+      }
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+      (req as any).user = decoded;
       const user = await User.findById(userId).select("-password");
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        res.status(404).json({ error: "User not found" });
       } else {
-        return res.status(200).json(user);
+        res.status(200).json(user);
       }
     } catch (error) {
-      return res.status(400).json({ error: `Invalid token. ${error}` });
+      res.status(400).json({ error: `Invalid token. ${error}` });
+      next(error);
     }
   };
 
@@ -243,24 +272,27 @@ class authController {
    *
    * @throws Will return a 500 status code with an error message if an error occurs during password reset.
    */
-  private forgetPassword = async ( req: Request,res: Response,next: any): Promise<Response> => {
-
-  const { email } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new ExpressError(
-        "Email could not be sent, please register first",
-        404
-      );
-    }
-    await user.getResetPasswordToken();
-    const RestToken = await user.resetPasswordToken;
-    console.log("Token :", JSON.stringify(RestToken));
-    // console.log("Reset :",JSON.stringify(resetToken));
-    await user.save();
-    const resetUrl = `http://localhost:3000/Password/Reset/${RestToken}`;
-    const message = `<!DOCTYPE html>
+  private forgetPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    const { email } = req.body;
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new ExpressError(
+          "Email could not be sent, please register first",
+          404
+        );
+      }
+      await user.getResetPasswordToken();
+      const RestToken = await user.resetPasswordToken;
+      console.log("Token :", JSON.stringify(RestToken));
+      // console.log("Reset :",JSON.stringify(resetToken));
+      await user.save();
+      const resetUrl = `http://localhost:3000/Password/Reset/${RestToken}`;
+      const message = `<!DOCTYPE html>
     <html lang="en">
     
     <head>
@@ -327,29 +359,28 @@ class authController {
     </body>
     
     </html>`;
-    try {
-      await ResetEmail({
-        to: user.email,
-        subject: "GearCart Password Reset request",
-        text: message,
-      });
-    } catch (error) {
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpire = undefined;
-      await user.save();
-      return next(new ExpressError("Email could not be sent", 500));
-    }
+      try {
+        await ResetEmail({
+          to: user.email,
+          subject: "GearCart Password Reset request",
+          text: message,
+        });
+      } catch (error) {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+        await user.save();
+        return next(new ExpressError("Email could not be sent", 500));
+      }
 
-    return res
-      .status(201)
-      .json({
+      res.status(201).json({
         success: true,
         message: "Email sent successfully, check your inbox",
         resetToken: RestToken,
       });
-  } catch (error) {
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" });
+      next(error);
+    }
   };
 
   // Reset Password
@@ -362,24 +393,32 @@ class authController {
    *
    * @throws Will return a 500 status code with an error message if an error occurs during password reset.
    */
-  private resetPassword = async (req: Request,res: Response): Promise<Response> => {
+  private resetPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     const resetPasswordToken = req.params.resetToken;
-   
+
     try {
       const user = await User.findOne({
         resetPasswordToken,
         resetPasswordExpire: { $gt: Date.now() },
       });
       if (!user) {
-        return res.status(404).json({ error: "Invalid Token" });
+        next(new ExpressError("Invalid Token", 404));
+        return;
       }
       user.password = await bcrypt.hash(req.body.password, 10);
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save();
-      return res.status(201).json({ success: true, message: "Password Reset Success" });
+      res
+        .status(201)
+        .json({ success: true, message: "Password Reset Success" });
     } catch (error) {
-      return res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: "Internal Server Error" });
+      next(error);
     }
   };
 }
